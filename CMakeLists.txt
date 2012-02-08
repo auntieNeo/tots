@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.6)
 project (Typing_of_the_Stars)
 set (Typing_of_the_Stars_VERSION_MAJOR 0)
-set (Typing_of_the_Stars_VERSION_MINOR 1)
+set (Typing_of_the_Stars_VERSION_MINOR 0)
 
 set (TOTS_SOURCE_DIR src)
 
