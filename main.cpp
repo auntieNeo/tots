@@ -36,7 +36,7 @@ int main(int argc, char **argv)
 
   ALLEGRO_EVENT_QUEUE *queue = al_create_event_queue();
 
-  ALLEGRO_TIMER *timer = al_install_timer(1.0 / FRAMES_PER_SECOND);
+  ALLEGRO_TIMER *timer = al_create_timer(1.0 / FRAMES_PER_SECOND);
   al_register_event_source(queue, al_get_timer_event_source(timer));
   al_start_timer(timer);
 
@@ -62,7 +62,7 @@ int main(int argc, char **argv)
     }
   }
 
-  al_uninstall_timer(timer);
+  al_destroy_timer(timer);
 
   al_destroy_event_queue(queue);
 
