@@ -5,6 +5,9 @@
 #include "luaFunctions.h"
 #include "world.h"
 
+#include "entity.h"
+#include "path.h"
+
 #include <iostream>
 using namespace std;
 
@@ -297,86 +300,6 @@ namespace Tots
   }
 
   /*!
-   * \brief Lua equivalent: Path *Path(String name, double initialSpeed)
-   */
-  int Path_Path(lua_State *lua)
-  {
-    int n = lua_gettop(lua);
-
-    if(n != 2)
-      return 0;
-
-    std::string name(lua_tostring(lua, 1));
-    double initialSpeed = lua_tonumber(lua, 2);
-    lua_pushlightuserdata(lua, new Path(name, initialSpeed));
-
-    return 1;
-  }
-
-  /*!
-   * \brief Lua equivalent: void Path_lineTo(Path *path, double x, double y, double time)
-   */
-  int Path_lineTo(lua_State *lua)
-  {
-    int n = lua_gettop(lua);
-
-    if(n != 4)
-      return 0;
-
-    Path *path = static_cast<Path*>(lua_touserdata(lua, 1));
-    double x = lua_tonumber(lua, 2);
-    double y = lua_tonumber(lua, 3);
-    double time = lua_tonumber(lua, 4);
-    path->lineTo(x, y, time);
-
-    return 0;
-  }
-
-  /*!
-   * \brief Lua equivalent: void Path_quadTo(Path *path, double cX, double cY, double endPointX, double endPointY, double time)
-   */
-  int Path_quadTo(lua_State *lua)
-  {
-    int n = lua_gettop(lua);
-
-    if(n != 6)
-      return 0;
-
-    Path *path = static_cast<Path*>(lua_touserdata(lua, 1));
-    double cX = lua_tonumber(lua, 2);
-    double cY = lua_tonumber(lua, 3);
-    double endPointX = lua_tonumber(lua, 4);
-    double endPointY = lua_tonumber(lua, 5);
-    double time = lua_tonumber(lua, 6);
-    path->quadTo(cX, cY, endPointX, endPointY, time);
-
-    return 0;
-  }
-
-  /*!
-   * \brief Lua equivalent: void Path_cubicTo(Path *path, double c1X, double c1Y, double c2X, double c2Y, double endPointX, double endPointY, double time)
-   */
-  int Path_cubicTo(lua_State *lua)
-  {
-    int n = lua_gettop(lua);
-
-    if(n != 8)
-      return 0;
-
-    Path *path = static_cast<Path*>(lua_touserdata(lua, 1));
-    double c1X = lua_tonumber(lua, 2);
-    double c1Y = lua_tonumber(lua, 3);
-    double c2X = lua_tonumber(lua, 4);
-    double c2Y = lua_tonumber(lua, 5);
-    double endPointX = lua_tonumber(lua, 6);
-    double endPointY = lua_tonumber(lua, 7);
-    double time = lua_tonumber(lua, 8);
-    path->cubicTo(c1X, c1Y, c2X, c2Y, endPointX, endPointY, time);
-
-    return 0;
-  }
-
-  /*!
    * \brief Lua equivalent: Behavior *Behavior(String name, int numberOfStates)
    */
   int Behavior_Behavior(lua_State *lua)
@@ -412,25 +335,6 @@ namespace Tots
     return 0;
   }
 
-  /*!
-   * \brief Lua equivalent: Entity *Entity(String name, Tots::Entity::Type type, Sprite *sprite, Behavior *behavior)
-   */
-  int Entity_Entity(lua_State *lua)
-  {
-    int n = lua_gettop(lua);
-
-    if(n != 4)
-      return 0;
-
-    std::string name(lua_tostring(lua, 1));
-    Tots::Entity::Type type = static_cast<Tots::Entity::Type>(lua_tointeger(lua, 2));
-    Sprite *sprite = static_cast<Sprite*>(lua_touserdata(lua, 3));
-    Behavior *behavior = static_cast<Behavior*>(lua_touserdata(lua, 4));
-    lua_pushlightuserdata(lua, new Entity(name, type, sprite, behavior));
-
-    return 1;
-  }
-
   void registerLuaFunctions(lua_State *lua)
   {
     // TODO: put some important constants into lua, especially the Entity::State enum
@@ -450,15 +354,11 @@ namespace Tots
 
     lua_register(lua, "Sprite", Sprite_Sprite);
 
-    lua_register(lua, "Path", Path_Path);
-    lua_register(lua, "Path_lineTo", Path_lineTo);
-    lua_register(lua, "Path_quadTo", Path_quadTo);
-    lua_register(lua, "Path_cubicTo", Path_cubicTo);
-
     lua_register(lua, "Behavior", Behavior_Behavior);
     lua_register(lua, "Behavior_setMovement", Behavior_setMovement);
 
-    lua_register(lua, "Entity", Entity_Entity);
+    Entity::registerLuaFunctions(lua);
+    Path::registerLuaFunctions(lua);
   }
   /*! @} */
 }

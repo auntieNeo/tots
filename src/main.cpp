@@ -7,6 +7,8 @@
 #include "common.h"
 #include "level.h"
 
+#include<cassert>
+
 #include <iostream>
 using namespace std;
 
@@ -31,8 +33,9 @@ int main(int argc, char **argv)
 
   ALLEGRO_DISPLAY *display = al_create_display(500, 768);
 
+  assert(argc == 2);
   Tots::Level *level;
-  level = new Tots::Level("level01.lua");
+  level = new Tots::Level(argv[1]);
 
   ALLEGRO_EVENT_QUEUE *queue = al_create_event_queue();
 

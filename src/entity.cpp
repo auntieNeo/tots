@@ -5,6 +5,13 @@
 #include "movement.h"
 #include "sprite.h"
 
+extern "C"
+{
+#include "lua.h"
+#include "lualib.h"
+#include "lauxlib.h"
+}
+
 namespace Tots
 {
   Entity::Entity(const std::string &name, Type type, Sprite *sprite, Behavior *behavior)
@@ -95,5 +102,29 @@ namespace Tots
     al_draw_line(x, y, x+m_width, y+m_height, al_map_rgb(0xFF, 0x00, 0x00), 3);
     al_draw_line(x, y+m_height, x+m_width, y, al_map_rgb(0xFF, 0x00, 0x00), 3);
     */
+  }
+
+  /*!
+   * \brief Lua equivalent: Entity *Entity(String name, Tots::Entity::Type type, Sprite *sprite, Behavior *behavior)
+   */
+  int Entity_Entity(lua_State *lua)
+  {
+    int n = lua_gettop(lua);
+
+    if(n != 4)
+      return 0;
+
+    std::string name(lua_tostring(lua, 1));
+    Tots::Entity::Type type = static_cast<Tots::Entity::Type>(lua_tointeger(lua, 2));
+    Sprite *sprite = static_cast<Sprite*>(lua_touserdata(lua, 3));
+    Behavior *behavior = static_cast<Behavior*>(lua_touserdata(lua, 4));
+    lua_pushlightuserdata(lua, new Entity(name, type, sprite, behavior));
+
+    return 1;
+  }
+
+  void Entity::registerLuaFunctions(lua_State *lua)
+  {
+    lua_register(lua, "Entity", Entity_Entity);
   }
 }

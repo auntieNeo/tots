@@ -50,6 +50,8 @@ namespace Tots
       void handleCollision(Entity *entity);
       virtual void draw(int x, int y) const;
 
+      static void registerLuaFunctions(lua_State *lua);
+
     protected:
       std::string m_name;
 

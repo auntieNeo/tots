@@ -8,7 +8,7 @@ namespace Tots
 {
   /*!
    * \class Behavior
-   * The behavior class stores the movements and Lua callbacks to be used for each state of an entity. Instantiated behaviors should be stored in Level and, in most cases, shared among many entities.
+   * The behavior class stores the movements and Lua callbacks to be used for each state of an entity. Instantiated behaviors should be stored in Level and are, in most cases, shared among many entities.
    * \sa Level::addBehavior()
    */
   Behavior::Behavior(const std::string &name, size_t numberOfStates)

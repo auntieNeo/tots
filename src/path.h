@@ -22,6 +22,8 @@ namespace Tots
       bool isEndOfPath();
       void tick(Entity *entity);
 
+      static void registerLuaFunctions(lua_State *lua);
+
     private:
       enum CurveType { LINE, QUAD, CUBIC };
 
