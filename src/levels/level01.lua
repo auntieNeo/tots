@@ -1,26 +1,3 @@
---[[ Lua  functions needed to spawn an entity:
---    [ ] addSprite
---    [ ] getSprite
---    [ ] addMovement
---    [ ] getMovement
---    [ ] addBehavior
---    [ ] getBehavior
---    [ ] addEntity
---    [ ] copyEntity
---    [ ] spawnEntity
---
---    [ ] Sprite
---
---    [ ] Path
---    [ ] Path_lineTo
---    [ ] Path_quadTo
---    [ ] Path_cubicTo
---
---    [ ] Behavior
---    [ ] Behavior_setMovement
---
---    [ ] Entity
---]]
 function foobar()
   blah = blah + 1
   spawnEntity(blah, 100 - (blah % 15) * 25, copyEntity("enemy"))
@@ -42,9 +19,9 @@ function initLevel()
   path = Path("enemy", 0.5)
   Path_quadTo(path, 150, 0, 150, 150, 0.5)
   Path_quadTo(path, 150, 350, 0, 350, 2)
-  addMovement(path)
+  addBehaviorState(path);
   behavior = Behavior("enemy", 3)
-  Behavior_setMovement(behavior, 1, getMovement("enemy"))
+  Behavior_addState(behavior, 1, getBehaviorState("enemy"))
   addBehavior(behavior)
   addEntity(Entity("enemy", 1, getSprite("enemy"), getBehavior("enemy")))
   

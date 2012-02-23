@@ -23,7 +23,7 @@ namespace Tots
     m_yState = 0;
     m_sprite = sprite;
     m_behavior = behavior;
-    m_state = IDLE;  // TODO: add proper state changing
+    m_currentState = Behavior::IDLE;
     m_frame = 0;
     m_ticks = 0;
     m_type = type;
@@ -43,9 +43,9 @@ namespace Tots
     return m_sprite->height();
   }
 
-  void Entity::setState(State state)
+  void Entity::setCurrentState(Behavior::StateFlag state)
   {
-    m_state = state;
+    m_currentState = state;
     m_xState = m_x;
     m_yState = m_y;
   }
@@ -62,7 +62,7 @@ namespace Tots
 
   Bitmask *Entity::bitmask()
   {
-    return m_sprite->bitmask(m_state, m_frame);
+    return m_sprite->bitmask(m_currentState, m_frame);
   }
 
   bool Entity::collides(Entity *entity)
@@ -88,9 +88,9 @@ namespace Tots
 
   void Entity::draw(int x, int y) const
   {
-    if(m_frame < m_sprite->numberOfFrames(m_state))
+    if(m_frame < m_sprite->numberOfFrames(m_currentState))
     {
-      al_draw_bitmap(m_sprite->frame(m_state, m_frame), x, y, 1);
+      al_draw_bitmap(m_sprite->frame(m_currentState, m_frame), x, y, 1);
       /*
       ALLEGRO_BITMAP *redBox = al_load_bitmap("sprites/redBox-32x32.png");
       al_draw_bitmap(redBox, x, y, 0);

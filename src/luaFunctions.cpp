@@ -122,10 +122,10 @@ namespace Tots
   }
 
   /*!
-   * \brief Lua equivalent: void addMovement(Movement *movement)
-   * \sa getMovement()
+   * \brief Lua equivalent: void addBehaviorState(EntityState *state)
+   * \sa getBehaviorState()
    */
-  int addMovement(lua_State *lua)
+  int addBehaviorState(lua_State *lua)
   {
     lua_getglobal(lua, "level");
 
@@ -133,22 +133,22 @@ namespace Tots
 
     if(n != 2)
     {
-      cout << "addMovement lua oops" << endl;
+      cout << "addBehaviorState lua oops" << endl;
       return 0;
     }
 
-    Movement *movement = static_cast<Movement*>(lua_touserdata(lua, 1));
+    Behavior::State *state = static_cast<Behavior::State*>(lua_touserdata(lua, 1));
     Level *level = static_cast<Level*>(lua_touserdata(lua, 2));
-    level->addMovement(movement);
+    level->addBehaviorState(state);
 
     return 0;
   }
 
   /*!
-   * \brief Lua equivalent: Movement *getMovement(String name)
-   * \sa addMovement()
+   * \brief Lua equivalent: Behavior::State *getBehaviorState(String name)
+   * \sa addBehaviorState()
    */
-  int getMovement(lua_State *lua)
+  int getBehaviorState(lua_State *lua)
   {
     lua_getglobal(lua, "level");
 
@@ -159,7 +159,7 @@ namespace Tots
 
     std::string name(lua_tostring(lua, 1));
     Level *level = static_cast<Level*>(lua_touserdata(lua, 2));
-    lua_pushlightuserdata(lua, level->getMovement(name));
+    lua_pushlightuserdata(lua, level->getBehaviorState(name));
 
     return 1;
   }
@@ -317,9 +317,9 @@ namespace Tots
   }
 
   /*!
-   * \brief Lua equivalent: void Behavior_setMovement(Behavior *behavior, Tots::Entity::State state, Movement *movement)
+   * \brief Lua equivalent: void Behavior_addState(Behavior *behavior, Tots::Entity::StateFlag flag, EntityState *state)
   */
-  int Behavior_setMovement(lua_State *lua)
+  int Behavior_addState(lua_State *lua)
   {
     int n = lua_gettop(lua);
 
@@ -327,10 +327,9 @@ namespace Tots
       return 0;
 
     Behavior *behavior = static_cast<Behavior*>(lua_touserdata(lua, 1));
-    Tots::Entity::State state = static_cast<Tots::Entity::State>(lua_tointeger(lua, 2));
-    Movement *movement = static_cast<Movement*>(lua_touserdata(lua, 3));
-    cout << "movement: " << (void *)movement << endl;
-    behavior->setMovement(state, movement);
+    Tots::Behavior::StateFlag flag = static_cast<Tots::Behavior::StateFlag>(lua_tointeger(lua, 2));
+    Tots::Behavior::State *state = static_cast<Behavior::State*>(lua_touserdata(lua, 3));
+    behavior->addState(flag, state);
 
     return 0;
   }
@@ -344,8 +343,8 @@ namespace Tots
     // *** new and improved ***
     lua_register(lua, "addSprite", addSprite);
     lua_register(lua, "getSprite", getSprite);
-    lua_register(lua, "addMovement", addMovement);
-    lua_register(lua, "getMovement", getMovement);
+    lua_register(lua, "addBehaviorState", addBehaviorState);
+    lua_register(lua, "getBehaviorState", getBehaviorState);
     lua_register(lua, "addBehavior", addBehavior);
     lua_register(lua, "getBehavior", getBehavior);
     lua_register(lua, "addEntity", addEntity);
@@ -355,7 +354,7 @@ namespace Tots
     lua_register(lua, "Sprite", Sprite_Sprite);
 
     lua_register(lua, "Behavior", Behavior_Behavior);
-    lua_register(lua, "Behavior_setMovement", Behavior_setMovement);
+    lua_register(lua, "Behavior_addState", Behavior_addState);
 
     Entity::registerLuaFunctions(lua);
     Path::registerLuaFunctions(lua);

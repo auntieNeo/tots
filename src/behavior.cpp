@@ -1,4 +1,5 @@
 #include "behavior.h"
+#include "entity.h"
 #include "movement.h"
 
 #include <iostream>
@@ -15,10 +16,10 @@ namespace Tots
   {
     m_name = name;
     m_numberOfStates = numberOfStates;
-    m_movement = new Movement*[numberOfStates];
+    m_states = new State*[numberOfStates];
     for(size_t i = 0; i < numberOfStates; i++)
     {
-      m_movement[i] = NULL;
+      m_states[i] = NULL;
     }
   }
 
@@ -27,34 +28,48 @@ namespace Tots
   }
 
   /*!
-   * Sets the movement to be used for the specified state.
+   * Adds a state to this behavior and sets the flag that corresponds with that state.
    *
-   * Behavior does not assume ownership of \a movement. If you want \a movement to be destroyed properly, register it with Level::addMovement()
+   * Behavior does not assume ownership of \a state. If you want \a state to be destroyed properly, register it with Level::addBehaviorState()
    *
    * \sa Level::addMovement() Level::getMovement()
    */
-  void Behavior::setMovement(Entity::State state, Movement *movement)
+  void Behavior::addState(Behavior::StateFlag flag, Behavior::State *state)
   {
-    if(static_cast<size_t>(state) >= m_numberOfStates)
+    // FIXME: shouldn't depend on a static array of states
+    if(static_cast<size_t>(flag) >= m_numberOfStates)
       return;
 
-    m_movement[state] = movement;
+    m_states[flag] = state;
   }
 
   void Behavior::tick(Entity *entity)
   {
-    if(static_cast<size_t>(entity->state()) >= m_numberOfStates)
+    if(static_cast<size_t>(entity->currentState()) >= m_numberOfStates)
     {
-//      cout << "state is too high" << endl;
       return;
     }
-    if(m_movement[entity->state()] == NULL)
+    if(m_states[entity->currentState()] == NULL)
     {
-//      cout << "no movement was set" << endl;
       return;
     }
-//    cout << "should be working" << endl;
 
-    m_movement[entity->state()]->tick(entity);
+    m_states[entity->currentState()]->tick(entity);
+  }
+
+  /*!
+   * \class Behavior::State
+   * The Behavior::State class determines how an entity moves and behaves. This is the class that should be inherited to actually move the entity around, give it attacks, etc.
+   *
+   * Some states might move an entity around based on some kind of path geometry, or based on a lua script.
+   * \sa Behavior::addState()
+   */
+  Behavior::State::State(const std::string &name)
+  {
+    m_name = name;
+  }
+
+  Behavior::State::~State()
+  {
   }
 }

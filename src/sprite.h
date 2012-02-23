@@ -23,11 +23,11 @@ namespace Tots
       int height() { return m_height; }
 
       int numberOfStates() { return m_numberOfStates; }
-      int numberOfFrames(Entity::State state) { return m_numberOfFrames[state]; }  // TODO: bounds checking
-      int framesPerSecond(Entity::State state) { return m_framesPerSecond[state]; }
+      int numberOfFrames(Behavior::StateFlag state) { return m_numberOfFrames[state]; }  // TODO: bounds checking
+      int framesPerSecond(Behavior::StateFlag state) { return m_framesPerSecond[state]; }
       ALLEGRO_BITMAP *bitmap() { return m_bitmap; }
-      ALLEGRO_BITMAP *frame(Entity::State state, int frame) { return m_frames[state][frame]; }
-      Bitmask *bitmask(Entity::State state, int frame) { return m_bitmasks[state][frame]; }
+      ALLEGRO_BITMAP *frame(Behavior::StateFlag state, int frame) { return m_frames[state][frame]; }
+      Bitmask *bitmask(Behavior::StateFlag state, int frame) { return m_bitmasks[state][frame]; }
 
     private:
       std::string m_name, m_file;

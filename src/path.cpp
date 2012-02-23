@@ -13,7 +13,7 @@ extern "C"
 
 namespace Tots
 {
-  Path::Path(const std::string &name, double initialSpeed) : Movement(name)
+  Path::Path(const std::string &name, double initialSpeed) : Behavior::State(name)
   {
     m_initialSpeed = initialSpeed;
     m_firstCurve = NULL;

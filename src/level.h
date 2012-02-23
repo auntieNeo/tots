@@ -37,8 +37,8 @@ namespace Tots
       void addSprite(Sprite *sprite);
       Sprite *getSprite(const std::string &name);
 
-      void addMovement(Movement *movement);
-      Movement *getMovement(const std::string &name);
+      void addBehaviorState(Behavior::State *state);
+      Behavior::State *getBehaviorState(const std::string &name);
 
       void addBehavior(Behavior *behavior);
       Behavior *getBehavior(const std::string &name);
@@ -74,7 +74,7 @@ namespace Tots
       std::list<DistanceEvent> m_distanceEvents;
       std::list<TimedEvent> m_timedEvents;
       std::map<std::string,Sprite*> m_sprites;
-      std::map<std::string,Movement*> m_movements;
+      std::map<std::string,Behavior::State*> m_behaviorStates;
       std::map<std::string,Behavior*> m_behaviors;
       std::map<std::string,Entity*> m_entities;
 

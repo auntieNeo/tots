@@ -5,6 +5,7 @@
 #include "behavior.h"
 #include "common.h"
 #include "level.h"
+#include "playerState.h"
 #include "world.h"
 
 #include <iostream>
@@ -69,10 +70,10 @@ namespace Tots
     if(m_players.size() == 0)
     {
       // FIXME: this is not how player should be initilized!
-      PlayerMovement *playerMovement = new PlayerMovement("player01", MAX_VELOCITY, ACCELERATION, FRICTION, ALLEGRO_KEY_FULLSTOP, ALLEGRO_KEY_E, ALLEGRO_KEY_O, ALLEGRO_KEY_U);
-      m_level->addMovement(playerMovement);
-      Behavior *playerBehavior = new Behavior("player01", Entity::FIRST_CUSTOM_STATE);
-      playerBehavior->setMovement(Entity::IDLE, m_level->getMovement("player01"));
+      PlayerState *playerState = new PlayerState("player01", MAX_VELOCITY, ACCELERATION, FRICTION, ALLEGRO_KEY_FULLSTOP, ALLEGRO_KEY_E, ALLEGRO_KEY_O, ALLEGRO_KEY_U);
+      m_level->addBehaviorState(playerState);
+      Behavior *playerBehavior = new Behavior("player01", Behavior::FIRST_CUSTOM_STATE);
+      playerBehavior->addState(Behavior::IDLE, m_level->getBehaviorState("player01"));
       m_level->addBehavior(playerBehavior);
       Player *player = new Player("player", Entity::PLAYER, m_level->getSprite("player"), m_level->getBehavior("player01"));
       m_players.push_back(player);
@@ -231,7 +232,7 @@ namespace Tots
   {
     entity->setX(x);
     entity->setY(y - m_distance);
-    entity->setState(Entity::IDLE);  // FIXME: should be SPAWNED
+    entity->setCurrentState(Behavior::IDLE);  // FIXME: should be SPAWNED
     // TODO: set entity index to a freed index
     entity->setIndex(m_entities.size());
     m_entities.push_back(entity);

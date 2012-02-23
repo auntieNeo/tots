@@ -7,7 +7,6 @@
 
 #include "enemy.h"
 #include "player.h"
-#include "playerMovement.h"
 
 namespace Tots
 { 

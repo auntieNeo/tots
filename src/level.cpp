@@ -12,7 +12,7 @@ using namespace std;
 namespace Tots
 {
   /*! \class Level
-   * Level is responsible for telling World what to do. It keeps track of the events added by lua scripts and calls them. It also stores the sprites, movements, behaviors, and (un-spawned) entities.
+   * Level is responsible for telling World what to do. It keeps track of the events added by lua scripts and calls them. It also stores the sprites, entity states, behaviors, and (un-spawned) entities.
    */
   Level::Level(const std::string &file)
   {
@@ -136,43 +136,43 @@ namespace Tots
   }
 
   /*!
-   * Adds a movement to the movements made available to entities by Level.
+   * Adds a behavior state to the behavior states made available to behavior objects by Level. Behavior states are used by Behavior objects to determine how an entity moves and behaves.
    *
-   * Level assumes ownership of \a movement. \a movement is deleted if a movement of the same name has already been added.
+   * Level assumes ownership of \a state. \a state is deleted if an entity state of the same name has already been added.
    *
-   * \sa getMovement()
+   * \sa getBehaviorState()
    */
-  void Level::addMovement(Movement *movement)
+  void Level::addBehaviorState(Behavior::State *state)
   {
-    if(m_movements.find(movement->name()) != m_movements.end())
+    if(m_behaviorStates.find(state->name()) != m_behaviorStates.end())
     {
-      cout << "addMovement oops" << endl;
-      // a movement with the same name already exists
-      delete movement;
+      cout << "addBehaviorState oops" << endl;
+      // a behavior state with the same name already exists
+      delete state;
       return;
     }
-    cout << "addMovement movement: " << (void *)movement << endl;
-    cout << "addMovement name: " << movement->name() << endl;
-    m_movements[movement->name()] = movement;
+    cout << "addBehaviorState state: " << (void *)state << endl;
+    cout << "addBehaviorState name: " << state->name() << endl;
+    m_behaviorStates[state->name()] = state;
   }
 
   /*!
-   * Returns the movement stored in the Level that has the string \a name as its name.
+   * Returns the behavior state stored in the Level that has the string \a name as its name.
    *
-   * Returns NULL if no such movement was found.
+   * Returns NULL if no such behavior state was found.
    *
-   * \sa addMovement()
+   * \sa addBehaviorState()
    */
-  Movement *Level::getMovement(const std::string &name)
+  Behavior::State *Level::getBehaviorState(const std::string &name)
   {
-    cout << "getMovement" << endl;
-    std::map<std::string,Movement*>::iterator movementIterator = m_movements.find(name);
-    if(movementIterator == m_movements.end())  // FIXME: should use the iterator to return the entity without having to find it twice
+    cout << "getBehaviorState" << endl;
+    std::map<std::string,Behavior::State*>::iterator i = m_behaviorStates.find(name);
+    if(i == m_behaviorStates.end())  // FIXME: should use the iterator to return the entity without having to find it twice
     {
-      cout << "getMovement oops" << endl;
+      cout << "getBehaviorState oops" << endl;
       return NULL;
     }
-    return (*movementIterator).second;
+    return (*i).second;
   }
 
   /*!
@@ -180,7 +180,7 @@ namespace Tots
    *
    * Level assumes ownership of \a behavior. \a behavior is deleted if a behavior of the same name has already been added.
    *
-   * \sa getMovement()
+   * \sa addBehaviorState()
    */
   void Level::addBehavior(Behavior *behavior)
   {

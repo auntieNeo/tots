@@ -3,13 +3,13 @@
 
 #include <cstddef>
 
+#include "behavior.h"
 #include "common.h"
-#include "movement.h"
 
 namespace Tots
 {
   // TODO: maybe abstract this so that movement dictating classes other than "Path", such as "Follow" or "LuaPath", can be used
-  class Path : public Movement
+  class Path : public Behavior::State
   {
     public:
       Path(const std::string &name, double initialSpeed);

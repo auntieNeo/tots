@@ -3,18 +3,17 @@
 
 #include <string>
 
+#include "behavior.h"
 #include "bitmask.h"
 #include "common.h"
 
 namespace Tots
 { 
-  class Behavior;
   class Sprite;
 
   class Entity
   {
     public:
-      enum State { SPAWNED = 0, IDLE, DESTROYED, FIRST_CUSTOM_STATE };
       enum Type { NONE = 0, ENEMY, ENEMY_FIRE, PLAYER, PLAYER_FIRE, ITEM };
 
       enum StateCallback { STATE_BEGIN = 0, STATE_REPEAT, STATE_END, STATE_TICK, STATE_COLLISION };
@@ -34,8 +33,8 @@ namespace Tots
       // TODO: figure out how to make these inline without having header dependancy hell...
       int width() const;
       int height() const;
-      State state() const { return m_state; }
-      void setState(State state);
+      Behavior::StateFlag currentState() const { return m_currentState; }
+      void setCurrentState(Behavior::StateFlag state);
       Type type() { return m_type; };
       int numberOfStates() const;
       int tickCount() const { return m_ticks; }
@@ -59,8 +58,8 @@ namespace Tots
       Behavior *m_behavior;
 
       double m_x, m_y;
-      double m_xState, m_yState;
-      State m_state;
+      double m_xState, m_yState;  // TODO: rename these to m_xInitial and m_yInitial
+      Behavior::StateFlag m_currentState;  // TODO: need to figure out how to store more data for the behavior, if necessary
       Type m_type;
       int m_frame, m_ticks;
       bool m_collided;

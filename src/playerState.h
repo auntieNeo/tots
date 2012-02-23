@@ -8,11 +8,11 @@
 
 namespace Tots
 {
-  class PlayerMovement : public Movement
+  class PlayerState : public Behavior::State
   {
     public:
-      PlayerMovement(const std::string &name, double maxVelocity, double acceleration, double friction, int upKey, int downKey, int leftKey, int rightKey);
-      ~PlayerMovement();
+      PlayerState(const std::string &name, double maxVelocity, double acceleration, double friction, int upKey, int downKey, int leftKey, int rightKey);
+      ~PlayerState();
 
       void tick(Entity *entity);
 

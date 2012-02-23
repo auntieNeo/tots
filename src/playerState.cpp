@@ -1,9 +1,9 @@
 #include "entity.h"
-#include "playerMovement.h"
+#include "playerState.h"
 
 namespace Tots
 {
-  PlayerMovement::PlayerMovement(const std::string &name, double maxVelocity, double acceleration, double friction, int upKey, int downKey, int leftKey, int rightKey) : Movement(name)
+  PlayerState::PlayerState(const std::string &name, double maxVelocity, double acceleration, double friction, int upKey, int downKey, int leftKey, int rightKey) : Behavior::State(name)
   {
     m_maxVelocity = maxVelocity;
     m_acceleration = acceleration;
@@ -15,12 +15,12 @@ namespace Tots
     m_keyboardState = new ALLEGRO_KEYBOARD_STATE;
   }
 
-  PlayerMovement::~PlayerMovement()
+  PlayerState::~PlayerState()
   {
     delete m_keyboardState;
   }
 
-  void PlayerMovement::tick(Entity *entity)
+  void PlayerState::tick(Entity *entity)
   {
     // read the keyboard/gamepad
     al_get_keyboard_state(m_keyboardState);
