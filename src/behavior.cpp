@@ -1,6 +1,5 @@
 #include "behavior.h"
 #include "entity.h"
-#include "movement.h"
 
 #include <iostream>
 using namespace std;

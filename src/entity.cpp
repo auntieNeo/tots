@@ -2,7 +2,6 @@
 
 #include "behavior.h"
 #include "entity.h"
-#include "movement.h"
 #include "sprite.h"
 
 extern "C"

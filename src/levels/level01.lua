@@ -1,6 +1,12 @@
-function foobar()
-  blah = blah + 1
-  spawnEntity(blah, 100 - (blah % 15) * 25, copyEntity("enemy"))
+function spawnStaggeredSwarm(entityName, numberOfEntities)
+  for i=1,numberOfEntities do
+    spawnEntity(i, 100 - (i % 15) * 25, copyEntity(entityName))
+--    addTimedEvent(level, 3+(i * 0.005), "foobar")
+  end
+end
+
+function spawnEnemies()
+  spawnStaggeredSwarm("enemy", 500)
 end
 
 function initLevel()
@@ -24,9 +30,6 @@ function initLevel()
   Behavior_addState(behavior, 1, getBehaviorState("enemy"))
   addBehavior(behavior)
   addEntity(Entity("enemy", 1, getSprite("enemy"), getBehavior("enemy")))
-  
-  blah = 10
-  for i=1,500 do
-    addTimedEvent(level, 3+(i * 0.005), "foobar")
-  end
+
+  addTimedEvent(level, 3, "spawnEnemies")
 end

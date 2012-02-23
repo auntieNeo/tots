@@ -56,7 +56,7 @@ namespace Tots
     m_distanceEvents.sort(compareDistance);
   }
 
-  void Level::addTimedEvent(double seconds, const std::string &luaFunction)
+  void Level::addTimedEvent(double seconds, const std::string &luaFunction)  // TODO: add support for arguments
   {
     TimedEvent event;
     event.seconds = seconds;

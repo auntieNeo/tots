@@ -3,8 +3,8 @@
 
 #include <allegro5/allegro.h>
 
+#include "behavior.h"
 #include "common.h"
-#include "movement.h"
 
 namespace Tots
 {
