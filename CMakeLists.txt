@@ -1,17 +1,15 @@
 cmake_minimum_required(VERSION 2.6)
 project (Typing_of_the_Stars)
 set (Typing_of_the_Stars_VERSION_MAJOR 0)
-set (Typing_of_the_Stars_VERSION_MINOR 0)
+set (Typing_of_the_Stars_VERSION_MINOR 2)
 
 set (TOTS_SOURCE_DIR src)
 
-if(POLICY CMP0015)
-  cmake_policy(SET CMP0015 OLD)
-endif(POLICY CMP0015)
-
 set(CMAKE_CXX_FLAGS "-g -Wall")
 
-include_directories(SYSTEM ./allegro/addons/color ./allegro/addons/font ./allegro/addons/image ./allegro/addons/primitives ./allegro/addons/ttf ./allegro/include)
-link_directories(./allegro/lib)
+include(FindPkgConfig)
+pkg_search_module(SDL2 REQUIRED sdl2)
+
+include_directories(SYSTEM ${SDL2_INCLUDE_DIRS})
 
 add_subdirectory("${TOTS_SOURCE_DIR}")
