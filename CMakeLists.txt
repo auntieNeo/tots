@@ -10,6 +10,8 @@ set(CMAKE_CXX_FLAGS "-g -Wall")
 include(FindPkgConfig)
 pkg_search_module(SDL2 REQUIRED sdl2)
 
-include_directories(SYSTEM ${SDL2_INCLUDE_DIRS})
+find_package(OpenGL REQUIRED)
+
+include_directories(SYSTEM ${OPENGL_INCLUDE_DIR} ${SDL2_INCLUDE_DIRS})
 
 add_subdirectory("${TOTS_SOURCE_DIR}")

@@ -1,9 +1,9 @@
-#include <SDL2/SDL.h>
-#include <unistd.h>
 #include "log.h"
 #include "opengl.h"
 
+#include <SDL2/SDL.h>
 #include <cstdio>
+#include <unistd.h>
 
 SDL_GLContext init_OpenGL(SDL_Window *window);
 
@@ -16,8 +16,8 @@ int main(int argc, char **argv)
   }
 
   fprintf(stderr, "SDL video drivers:\n");
-  int numVideoDrivers;
-  if((numVideoDrivers = SDL_GetNumVideoDrivers()) <= 0) {
+  int numVideoDrivers = SDL_GetNumVideoDrivers();
+  if(numVideoDrivers <= 0) {
     log_SDL_error("Could not find any SDL video drivers");
     return 1;
   }
@@ -48,6 +48,11 @@ int main(int argc, char **argv)
 
   // TODO: a lot of error checking
   GLuint program = glCreateProgram();
+  if(program == 0)
+  {
+    log_OpenGL_error("Unable to create OpenGL shader program");
+    return 1;
+  }
 
   // glCreateShader
 //  shader = glCreateShader();

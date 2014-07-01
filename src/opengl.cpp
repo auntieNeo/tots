@@ -1,5 +1,6 @@
 #define OPENGL_CPP_
 #include "opengl.h"
+
 #include "log.h"
 
 /*
