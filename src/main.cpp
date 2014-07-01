@@ -1,46 +1,32 @@
 #include <SDL2/SDL.h>
 #include <unistd.h>
-#include <GL/gl.h>  // from Mesa 3D
+#include "log.h"
+#include "opengl.h"
 
-// TODO: move the OpenGL stuff to its own file
+#include <cstdio>
 
-/*
- * Initialize all of the OpenGL API function pointers that we use. As suggested
- * by the SDL documentation for SDL_GL_GetProcAddress(), we do this only after
- * activating the OpenGL context in order to maintain compatibility with
- * Windows and possibly other platforms.
- */
-SDL_GLContext init_OpenGL(SDL_Window *window)
-{
-  if((SDL_GLContext glcontext = SDL_GL_CreateContext(window)) == NULL) {
-    log_SDL_error("Unable to create OpenGL context");
-    return 1;
-  }
-}
-
-void log_SDL_error(const char *msg)
-{
-  fprintf(stderr,
-          "%s: %s\n",
-          msg, SDL_GetError());
-  // TODO: figure out SDL_Log
-  SDL_ClearError();
-}
-
-void log_OpenGL_error(const char *msg)
-{
-}
-
-struct vertex {
-  GL_FLOAT pos_x, pos_y;
-  GL_FLOAT r, g, b, a;
-};
+SDL_GLContext init_OpenGL(SDL_Window *window);
 
 int main(int argc, char **argv)
 {
 
-  if(SDL_Init((SDL_INIT_VIDEO | SDL_INIT_TIMER) != 0)) {
+  if(SDL_Init((SDL_INIT_TIMER) != 0)) {
     log_SDL_error("Unable to initialize SDL");
+    return 1;
+  }
+
+  fprintf(stderr, "SDL video drivers:\n");
+  int numVideoDrivers;
+  if((numVideoDrivers = SDL_GetNumVideoDrivers()) <= 0) {
+    log_SDL_error("Could not find any SDL video drivers");
+    return 1;
+  }
+  for(int i = 0; i < numVideoDrivers; ++i) {
+    fprintf(stderr, "  %s\n", SDL_GetVideoDriver(i));
+  }
+
+  if(SDL_VideoInit("x11") != 0) {
+    log_SDL_error("Unable to load SDL video driver");
     return 1;
   }
 
@@ -58,13 +44,13 @@ int main(int argc, char **argv)
       SDL_WINDOW_OPENGL
   );
 
-  context = init_OpenGL(window);
+  SDL_GLContext context = init_OpenGL(window);
 
   // TODO: a lot of error checking
-  program = glCreateProgram();
+  GLuint program = glCreateProgram();
 
   // glCreateShader
-  shader = glCreateShader();
+//  shader = glCreateShader();
 
   // TODO: glShaderSource
   // TODO: glCompileShader
@@ -75,11 +61,6 @@ int main(int argc, char **argv)
 
   // draw a triangle
   // make up some vertex data
-  struct vertex triangle[] = {
-    { 
-  };
-  glVertexAttribPointer(
-  );
 
   sleep(10);
 
