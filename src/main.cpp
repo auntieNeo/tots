@@ -1,5 +1,5 @@
+#include "common.h"
 #include "log.h"
-#include "opengl.h"
 
 #include <SDL2/SDL.h>
 #include <cstdio>
@@ -46,10 +46,55 @@ int main(int argc, char **argv)
 
   SDL_GLContext context = init_OpenGL(window);
 
-  // TODO: a lot of error checking
+  GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
+  if(vertexShader == 0) {
+    log_OpenGL_error("Unable to create OpenGL vertex shader");
+    return 1;
+  }
+
+  // FIXME: move this into some routines
+  const char *file_path = "src/shaders/simple.vert";
+  FILE *f = fopen(file_path, "r");
+  if(f == NULL) {
+    log_error("could not open file %s\n", file_path);
+    return 1;
+  }
+  fseek(f, 0, SEEK_END);
+  long fsize = ftell(f) + 1;
+  assert(fsize > 0);
+  fseek(f, 0, SEEK_SET);
+  GLchar *source = (GLchar *)malloc(fsize);
+  if(source == NULL) {
+    log_error("could not malloc");
+    exit(1);
+  }
+  size_t num_read = fread(source, 1, fsize, f);
+  assert(num_read == (unsigned long)fsize - 1);
+  glShaderSource(vertexShader, 1, &source, NULL);
+  if(check_OpenGL_error("Could not set shader source"))
+    exit(1);
+  free(source);
+  source = NULL;
+
+  fprintf(stderr, "Compiling \"%s\"...", file_path);
+  fflush(stderr);
+  glCompileShader(vertexShader);
+  fprintf(stderr, " done.\n");
+  GLint compileStatus, infoLogLength;
+  glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &compileStatus);
+  glGetShaderiv(vertexShader, GL_INFO_LOG_LENGTH, &infoLogLength);
+  GLchar * infoLog = (GLchar *)malloc(infoLogLength);
+  glGetShaderInfoLog(vertexShader, infoLogLength, NULL, infoLog);
+  log_info(infoLog);  // FIXME: I must change this if I ever update log_info to use printf format
+  free(infoLog);
+  infoLog = NULL;
+  if(compileStatus == GL_FALSE) {
+    log_OpenGL_error("error compiling vertex shader");
+    exit(1);
+  }
+
   GLuint program = glCreateProgram();
-  if(program == 0)
-  {
+  if(program == 0) {
     log_OpenGL_error("Unable to create OpenGL shader program");
     return 1;
   }
