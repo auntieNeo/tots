@@ -1,6 +1,8 @@
 #include "common.h"
 #include "log.h"
 
+#include "graphics/graphics.h"
+
 #include <SDL2/SDL.h>
 #include <cstdio>
 #include <unistd.h>
@@ -24,6 +26,10 @@ int main(int argc, char **argv)
   for(int i = 0; i < numVideoDrivers; ++i) {
     fprintf(stderr, "  %s\n", SDL_GetVideoDriver(i));
   }
+
+  tots::Graphics gfx = tots::Graphics();
+
+  gfx.init();
 
   if(SDL_VideoInit("x11") != 0) {
     log_SDL_error("Unable to load SDL video driver");
@@ -120,6 +126,8 @@ int main(int argc, char **argv)
   SDL_DestroyWindow(window);
 
   SDL_GL_UnloadLibrary();
+
+  SDL_VideoQuit();
 
   SDL_Quit();
   return 0;
