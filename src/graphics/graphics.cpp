@@ -31,8 +31,10 @@ namespace tots {
 
     // TODO: load shader code into OpenGL
 
-    free(m_fragShaderPaths);
-    free(m_vertShaderPaths);
+    for(size_t i = 0; i < m_numFragShaders; ++i)
+      free(m_fragShaderPaths);
+    for(size_t i = 0; i < m_numVertShaders; ++i)
+      free(m_vertShaderPaths);
   }
 
   void Graphics::close() {
