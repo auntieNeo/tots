@@ -22,6 +22,8 @@ namespace tots {
       GLuint *m_vertShaders, *m_fragShaders;
       size_t m_numVertShaders, m_numFragShaders;
 
+      GLuint m_program;
+
       static char **m_findShaders(const char *dirp, const char *ext, size_t *numShaders);
 
       GLuint m_loadShader(const char *sourcePath, GLenum shaderType);

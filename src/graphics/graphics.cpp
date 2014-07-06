@@ -16,6 +16,7 @@ namespace tots {
     m_window = NULL;
     m_vertShaders = m_fragShaders = NULL;
     m_numVertShaders = m_numFragShaders = 0;
+    m_program = 0;
   }
 
   Graphics::~Graphics() {
@@ -76,9 +77,48 @@ namespace tots {
     for(size_t i = 0; i < numFragShaderPaths; ++i)
       m_loadShader(fragShaderPaths[i], GL_FRAGMENT_SHADER);
 
-    // TODO: glAttachShader
-    // TODO: glLinkProgram
-    // TODO: glUseProgram
+    // create the shader program
+    m_program = glCreateProgram();
+    if(m_program == 0) {
+      log_OpenGL_error("Unable to create OpenGL shader program");
+      exit(1);  // FIXME: abort properly
+    }
+
+    // attach shaders to shader program
+    for(size_t i = 0; i < m_numVertShaders; ++i) {
+      fprintf(stderr, "Attaching vertex shader...\n");
+      glAttachShader(m_program, m_vertShaders[i]);
+      if(check_OpenGL_error("Could not attach vertex shader"))
+        exit(1);  // FIXME: abort properly
+    }
+    for(size_t i = 0; i < m_numFragShaders; ++i) {
+      fprintf(stderr, "Attaching fragment shader...\n");
+      glAttachShader(m_program, m_fragShaders[i]);
+      if(check_OpenGL_error("Could not attach fragment shader"))
+        exit(1);  // FIXME: abort properly
+    }
+
+    // link the shader program
+    fprintf(stderr, "Linking shader program...\n");
+    glLinkProgram(m_program);
+    GLint linkStatus, infoLogLength;
+    glGetProgramiv(m_program, GL_LINK_STATUS, &linkStatus);
+    glGetProgramiv(m_program, GL_INFO_LOG_LENGTH, &infoLogLength);
+    GLchar *infoLog = (GLchar *)malloc(infoLogLength * sizeof(GLchar));
+    glGetProgramInfoLog(m_program, infoLogLength, NULL, infoLog);
+    log_info(infoLog);
+    free(infoLog);
+    infoLog = NULL;
+    if(linkStatus == GL_FALSE) {
+      log_OpenGL_error("error linking shader program");
+      exit(1);  // FIXME: abort properly
+    }
+
+    // install shader program in current rendering context
+    fprintf(stderr, "Installing shader program...\n");
+    glUseProgram(m_program);
+    if(check_OpenGL_error("Could not use shader program"))
+      exit(1);  // FIXME: abort properly
 
     for(size_t i = 0; i < numFragShaderPaths; ++i)
       free(fragShaderPaths[i]);  // allocated via malloc(3) as per scandir(3) man page
@@ -184,7 +224,7 @@ namespace tots {
     assert(num_read == (unsigned long)fsize - 1);
     glShaderSource(shader, 1, &source, NULL);
     if(check_OpenGL_error("Could not set shader source"))
-      exit(1);
+      exit(1);  // FIXME: abort properly
     free(source);
     source = NULL;
 
@@ -196,14 +236,14 @@ namespace tots {
     GLint compileStatus, infoLogLength;
     glGetShaderiv(shader, GL_COMPILE_STATUS, &compileStatus);
     glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &infoLogLength);
-    GLchar * infoLog = (GLchar *)malloc(infoLogLength);
+    GLchar *infoLog = (GLchar *)malloc(infoLogLength * sizeof(GLchar));
     glGetShaderInfoLog(shader, infoLogLength, NULL, infoLog);
     log_info(infoLog);  // FIXME: I must change this if I ever update log_info to use printf format
     free(infoLog);
     infoLog = NULL;
     if(compileStatus == GL_FALSE) {
       log_OpenGL_error("error compiling vertex shader");
-      exit(1);
+      exit(1);  // FIXME: abort properly
     }
 
     // add shader to list
