@@ -2,6 +2,7 @@
 #include "log.h"
 
 #include "graphics/graphics.h"
+#include "graphics/triangle.h"
 
 #include <SDL2/SDL.h>
 #include <cstdio>
@@ -21,8 +22,10 @@ int main(int argc, char **argv)
 
   gfx.init();
 
-  // draw a triangle
-  // make up some vertex data
+  tots::GraphicsTriangle *triangle = new tots::GraphicsTriangle();
+  gfx.addComponent(triangle);
+
+  gfx.update();
 
   sleep(10);
 

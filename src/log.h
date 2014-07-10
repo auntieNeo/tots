@@ -1,7 +1,7 @@
 #ifndef LOG_H_
 #define LOG_H_
 
-#include "opengl.h"
+#include "graphics/opengl.h"
 
 void log_info(const char *msg);
 void log_error(const char *msg, ...);

@@ -1,4 +1,5 @@
 #include "graphics.h"
+#include "component.h"
 
 #include "../common.h"
 #include "../log.h"
@@ -11,16 +12,25 @@
 
 #include <cstdio>
 
+#define MAX_COMPONENTS 128
+
 namespace tots {
   Graphics::Graphics() {
     m_window = NULL;
     m_vertShaders = m_fragShaders = NULL;
     m_numVertShaders = m_numFragShaders = 0;
     m_program = 0;
+    m_components = static_cast<GraphicsComponent **>(malloc(sizeof(GraphicsComponent *) * MAX_COMPONENTS));
+    m_numComponents = 0;
   }
 
   Graphics::~Graphics() {
     m_numVertShaders = m_numFragShaders = 0;
+    for(size_t i = 0; i < m_numComponents; ++i) {
+      delete m_components[i];
+    }
+    delete m_components;
+    m_components = NULL;
     // TODO: call this->close() safely in destructor
   }
 
@@ -141,6 +151,20 @@ namespace tots {
   }
 
   void Graphics::update() const {
+    // TODO: set graphics context
+    // TODO: buffering, etc.
+    printf("m_numComponents: %ld\n", m_numComponents);
+    glClear(0xFFFF);
+    for(size_t i = 0; i < m_numComponents; ++i) {
+      printf("drawing...\n");
+      m_components[i]->draw(this);
+    }
+  }
+
+  void Graphics::addComponent(GraphicsComponent *component) {
+    assert(m_numComponents < MAX_COMPONENTS);
+    m_components[m_numComponents++] = component;
+    component->init(this);
   }
 
   const char *filter_ext;

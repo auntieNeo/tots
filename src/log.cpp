@@ -1,7 +1,5 @@
 #include "log.h"
 
-#include "opengl.h"
-
 #include <cstdarg>
 #include <SDL2/SDL.h>
 
