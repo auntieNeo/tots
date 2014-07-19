@@ -2,7 +2,6 @@ glAttachShader
 glBindBuffer
 glBindVertexArray
 glBufferData
-glClear
 glCompileShader
 glCreateProgram
 glCreateShader

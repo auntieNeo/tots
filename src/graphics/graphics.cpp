@@ -66,6 +66,16 @@ namespace tots {
 
     m_context = init_OpenGL(m_window);
 
+    // enable smooth shading
+    glShadeModel(GL_SMOOTH);
+
+    // set the background color to black
+    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+
+    // enable depth testing
+    glClearDepth(1.0f);
+    glDepthFunc(GL_LEQUAL);
+
     // find all the shaders
     // directory containing all vertex (.vert), fragment (.frag), etc. shaders
     // TODO: move this into a routine
@@ -159,6 +169,9 @@ namespace tots {
       printf("drawing...\n");
       m_components[i]->draw(this);
     }
+
+    // swap the buffer to actually display it
+    SDL_GL_SwapWindow(m_window);
   }
 
   void Graphics::addComponent(GraphicsComponent *component) {
