@@ -4,6 +4,8 @@
 #include "graphics/graphics.h"
 #include "graphics/triangle.h"
 
+#include "subsystem/gameLoop.h"
+
 #include <SDL2/SDL.h>
 #include <cstdio>
 #include <unistd.h>
@@ -12,24 +14,16 @@ SDL_GLContext init_OpenGL(SDL_Window *window);
 
 int main(int argc, char **argv)
 {
-
   if(SDL_Init((SDL_INIT_TIMER) != 0)) {
     log_SDL_error("Unable to initialize SDL");
     return 1;
   }
 
-  tots::Graphics gfx = tots::Graphics();
+  tots::GameLoop *loop = new tots::GameLoop();
 
-  gfx.init();
+  loop->run();
 
-  tots::GraphicsTriangle *triangle = new tots::GraphicsTriangle();
-  gfx.addComponent(triangle);
-
-  gfx.update();
-
-  sleep(10);
-
-  gfx.close();
+  delete loop;
 
   SDL_Quit();
   return 0;

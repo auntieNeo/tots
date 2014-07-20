@@ -6,3 +6,5 @@ CMakeFiles
 Makefile
 cmake_install.cmake
 src/tots
+documentation/html
+documentation/latex

@@ -2,5 +2,6 @@
 #define COMMON_H_
 
 #include <cassert>
+#include <cstddef>
 
 #endif

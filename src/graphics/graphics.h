@@ -2,19 +2,21 @@
 #define GRAPHICS_H_
 
 #include "opengl.h"
+#include "../subsystem/subsystem.h"
 
 #include <cstddef>
 
 namespace tots {
+  class GameState;
   class GraphicsComponent;
-  class Graphics {
+  class Graphics : public Subsystem {
     public:
       Graphics();
       ~Graphics();
 
       void init();
       void close();
-      void update() const;
+      void update(size_t dt, const GameState *state);
 
       void addComponent(GraphicsComponent *component);
 

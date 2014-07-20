@@ -3,6 +3,9 @@
 #include "opengl.h"
 
 namespace tots {
+  /**
+   * This is a triangle constructor.
+   */
   GraphicsTriangle::GraphicsTriangle() {
   }
 
