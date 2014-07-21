@@ -19,6 +19,7 @@ namespace tots {
     protected:
       SDL_atomic_t m_freeThreads;
       SDL_sem *m_threadSemaphore;
+      SDL_atomic_t m_done;
 
     private:
       SubsystemThread **m_threads;
