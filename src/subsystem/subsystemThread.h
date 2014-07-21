@@ -8,7 +8,7 @@ namespace tots {
   class Subsystem;
   class SubsystemThread {
     public:
-      SubsystemThread(const char *name);
+      SubsystemThread(int threadNumber, ThreadPool *pool, const GameState* gameState);
       ~SubsystemThread();
 
       void run(Subsystem *subsystem);
@@ -16,7 +16,10 @@ namespace tots {
     private:
       GameState *m_gameState;
       Subsystem *m_currentSubsystem;
+
       SDL_Thread *m_sdlThread;
+
+      ThreadPool *m_pool;
 
       static int m_run(void *self);
   };

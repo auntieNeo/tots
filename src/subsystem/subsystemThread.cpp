@@ -6,18 +6,29 @@
 #include <SDL2/SDL_thread.h>
 
 namespace tots {
-  SubsystemThread::SubsystemThread(const char *name) {
-    m_gameState = new GameState();
+  SubsystemThread::SubsystemThread(int threadNumber, ThreadPool *pool, const GameState *gameState) {
     m_currentSubsystem = NULL;
-    m_sdlThread = SDL_CreateThread(m_run, name, this);
+    m_pool = pool;
+
+    m_gameState = new GameState(*gameState);
+
+    char *threadName = new char[256];
+    snprintf(threadName, 256, "Subsystem Thread %02ld", threadNumber);
+    m_sdlThread = SDL_CreateThread(m_run, threadName, this);
+    delete[] threadName;
   }
 
   SubsystemThread::~SubsystemThread() {
+    // wait for the thread
+    SDL_WaitThread(m_sdlThread, NULL);
+
+    // delete our game state
     delete m_gameState;
   }
 
   void SubsystemThread::run(Subsystem *subsystem) {
-    // TODO: update the game state
+    // TODO: assert that the thread is not running
+    // TODO: run the subsystem in an SDL thread
 
     subsystem->update(m_gameState);
   }
