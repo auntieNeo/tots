@@ -2,6 +2,7 @@
 
 #include "gameState.h"
 #include "subsystem.h"
+#include "threadPool.h"
 
 #include <SDL2/SDL_thread.h>
 
@@ -14,8 +15,11 @@ namespace tots {
     // copy the game state from the given gameState
     m_gameState = new GameState(*gameState);
 
+    // mark this thread as not free
+    SDL_AtomicSet(&m_free, 0);
+
     // create an SDL semaphore to control our thread
-    m_threadSemaphore = SDL_CreateSemaphore(0);
+    m_runSemaphore = SDL_CreateSemaphore(0);
 
     // create our SDL thread
     char *threadName = new char[256];
@@ -30,7 +34,7 @@ namespace tots {
     SDL_WaitThread(m_sdlThread, NULL);
 
     // destroy our semaphore
-    SDL_DestroySemaphore(m_threadSemaphore);
+    SDL_DestroySemaphore(m_runSemaphore);
 
     // delete our game state
     delete m_gameState;
@@ -38,34 +42,35 @@ namespace tots {
 
   void SubsystemThread::run(Subsystem *subsystem) {
     // assert that this thread is free and not running
-    assert(m_pool->m_freeThreads & (1 << m_threadIndex));
+    assert(SDL_AtomicGet(&m_free));
 
     // change the current subsystem
     m_currentSubsystem = subsystem;
 
-    // mark this thread as not free in m_pool->m_freeThreads
+    // mark this thread as not free
     SDL_AtomicSet(&m_free, 0);
 
+    printf("Run thread %d\n", m_threadIndex);
     // signal the thread to start running
     SDL_SemPost(m_runSemaphore);
   }
 
   int SubsystemThread::m_run(void *voidSelf) {
     SubsystemThread *self = static_cast<SubsystemThread *>(voidSelf);
-    while(!SDL_AtomicGet(&(m_pool->m_done))) {
+    while(!SDL_AtomicGet(&(self->m_pool->m_done))) {
       // mark this thread as free
-      SDL_AtomicSet(&m_free, 1);
+      SDL_AtomicSet(&(self->m_free), 1);
 
       // post to m_pool->m_threadSemaphore to let main thread know we're available
-      SDL_SemPost(m_pool->m_threadSemaphore);
+      SDL_SemPost(self->m_pool->m_threadSemaphore);
 
       // wait for m_runSemaphore signal (main thread wants us to run now)
-      SDL_SemWait(m_runSemaphore);
+      SDL_SemWait(self->m_runSemaphore);
 
       // TODO: automatically update the game state
 
       // run the subsystem
-      self->m_currentSubsystem->update(m_gameState);
+      self->m_currentSubsystem->update(self->m_gameState);
     }
     return 0;
   }

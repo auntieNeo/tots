@@ -8,9 +8,8 @@
 namespace tots {
   ThreadPool::ThreadPool(size_t numThreads) : m_numThreads(numThreads) {
     // initiate the SDL thread synchronization primitives
-    assert(numThreads < sizeof(SDL_atomic_t) * 8);
-    SDL_AtomicSet(&m_freeThreads, (1 << numThreads) - 1);
-    m_threadSemaphore = SDL_CreateSemaphore(numThreads);
+    m_threadSemaphore = SDL_CreateSemaphore(0);
+    SDL_AtomicSet(&m_done, 0);
 
     // create an empty game state to share among the threads
     GameState gs;
@@ -38,8 +37,8 @@ namespace tots {
 
     // find the first free thread
     int threadIndex = -1;
-    for(int i = 0; i < m_numThreads; ++i) {
-      if(SDL_AtomicGet(&(m_threads->m_free))) {
+    for(size_t i = 0; i < m_numThreads; ++i) {
+      if(SDL_AtomicGet(&(m_threads[i]->m_free))) {
         threadIndex = i;
         break;
       }

@@ -160,10 +160,10 @@ namespace tots {
     SDL_VideoQuit();
   }
 
-  void Graphics::update(size_t dt, const GameState *state) {
+  void Graphics::m_update(const GameState *state) {
     // TODO: set graphics context
     // TODO: buffering, etc.
-    printf("m_numComponents: %ld\n", m_numComponents);
+    printf("In graphics thread.\n");
     glClear(0xFFFF);
     for(size_t i = 0; i < m_numComponents; ++i) {
       printf("drawing...\n");

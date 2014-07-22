@@ -1,5 +1,7 @@
 #include "subsystem.h"
 
+#include <cstdio>
+
 namespace tots {
   Subsystem::Subsystem() {
   }
@@ -8,6 +10,7 @@ namespace tots {
   }
 
   void Subsystem::update(const GameState *state) {
-    // TODO: determine and update the delta time
+    // TODO: determine and update the delta time in m_dt
+    m_update(state);
   }
 }

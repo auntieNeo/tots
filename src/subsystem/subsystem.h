@@ -11,7 +11,11 @@ namespace tots {
       Subsystem();
       virtual ~Subsystem();
 
-      virtual void update(const GameState *state);
+      void update(const GameState *state);
+
+    protected:
+      virtual void m_update(const GameState *state) = 0;
+      size_t m_dt;
 
     private:
       EventQueue *m_input, *m_output;

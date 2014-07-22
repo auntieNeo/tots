@@ -16,9 +16,11 @@ namespace tots {
 
       void init();
       void close();
-      void update(size_t dt, const GameState *state);
 
       void addComponent(GraphicsComponent *component);
+
+    protected:
+      void m_update(const GameState *state);
 
     private:
       SDL_Window *m_window;
