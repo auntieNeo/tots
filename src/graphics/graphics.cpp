@@ -1,5 +1,6 @@
 #include "graphics.h"
 #include "component.h"
+#include "triangle.h"
 
 #include "../common.h"
 #include "../log.h"
@@ -144,6 +145,10 @@ namespace tots {
       free(fragShaderPaths[i]);  // allocated via malloc(3) as per scandir(3) man page
     for(size_t i = 0; i < numVertShaderPaths; ++i)
       free(vertShaderPaths[i]);  // allocated via malloc(3) as per scandir(3) man page
+
+    // TODO: spawn this properly
+    GraphicsTriangle *triangle = new GraphicsTriangle();
+    addComponent(triangle);
   }
 
   void Graphics::close() {
@@ -158,6 +163,8 @@ namespace tots {
     SDL_GL_UnloadLibrary();
 
     SDL_VideoQuit();
+
+    // TODO: delete components
   }
 
   void Graphics::m_update(const GameState *state) {
