@@ -14,6 +14,7 @@ namespace tots {
       ThreadPool(size_t numThreads);
       ~ThreadPool();
 
+      void init(Subsystem *subsystem);
       void run(Subsystem *subsystem);
 
     protected:
@@ -23,6 +24,9 @@ namespace tots {
     private:
       SubsystemThread **m_threads;
       size_t m_numThreads;
+
+      SubsystemThread **m_hoggedThreads;
+      size_t m_numHoggedThreads;
   };
 }
 

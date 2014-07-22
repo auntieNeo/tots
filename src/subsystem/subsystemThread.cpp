@@ -10,7 +10,6 @@ namespace tots {
   SubsystemThread::SubsystemThread(int threadIndex, ThreadPool *pool, const GameState *gameState) {
     m_currentSubsystem = NULL;
     m_pool = pool;
-    m_threadIndex = threadIndex;
 
     // copy the game state from the given gameState
     m_gameState = new GameState(*gameState);
@@ -40,17 +39,40 @@ namespace tots {
     delete m_gameState;
   }
 
+  // FIXME: duplicated code here
   void SubsystemThread::run(Subsystem *subsystem) {
     // assert that this thread is free and not running
     assert(SDL_AtomicGet(&m_free));
 
     // change the current subsystem
     m_currentSubsystem = subsystem;
+    m_init = false;
+
+    // set the last thread for this subsystem
+    m_currentSubsystem->m_lastThread = this;
 
     // mark this thread as not free
     SDL_AtomicSet(&m_free, 0);
 
-    printf("Run thread %d\n", m_threadIndex);
+    // signal the thread to start running
+    SDL_SemPost(m_runSemaphore);
+  }
+
+  // FIXME: duplicated code here
+  void SubsystemThread::run_init(Subsystem *subsystem) {
+    // assert that this thread is free and not running
+    assert(SDL_AtomicGet(&m_free));
+
+    // change the current subsystem
+    m_currentSubsystem = subsystem;
+    m_init = true;
+
+    // NOTE: _don't_ set the last thread for this subsystem, as this can hurt thread hogs. We accept the possible cache miss, at least until I can find a better solution.
+    //m_currentSubsystem->m_lastThread = this;
+
+    // mark this thread as not free
+    SDL_AtomicSet(&m_free, 0);
+
     // signal the thread to start running
     SDL_SemPost(m_runSemaphore);
   }
@@ -62,7 +84,9 @@ namespace tots {
       SDL_AtomicSet(&(self->m_free), 1);
 
       // post to m_pool->m_threadSemaphore to let main thread know we're available
-      SDL_SemPost(self->m_pool->m_threadSemaphore);
+      // FIXME: This is probably broken with thread hogging. Need to refactor this code ASAP.
+      if(self->m_currentSubsystem == NULL || !(self->m_currentSubsystem->hints() & Subsystem::HOG_THREAD))
+        SDL_SemPost(self->m_pool->m_threadSemaphore);
 
       // wait for m_runSemaphore signal (main thread wants us to run now)
       SDL_SemWait(self->m_runSemaphore);
@@ -70,7 +94,10 @@ namespace tots {
       // TODO: automatically update the game state
 
       // run the subsystem
-      self->m_currentSubsystem->update(self->m_gameState);
+      if(self->m_init)
+        self->m_currentSubsystem->init(self->m_gameState);
+      else
+        self->m_currentSubsystem->update(self->m_gameState);
     }
     return 0;
   }

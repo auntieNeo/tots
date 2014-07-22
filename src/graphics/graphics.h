@@ -14,12 +14,13 @@ namespace tots {
       Graphics();
       ~Graphics();
 
-      void init();
       void close();
 
       void addComponent(GraphicsComponent *component);
+      Subsystem::Hints hints() const { return Subsystem::HOG_THREAD; }
 
     protected:
+      void m_init(const GameState *state);
       void m_update(const GameState *state);
 
     private:

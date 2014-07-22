@@ -34,7 +34,7 @@ namespace tots {
     // TODO: call this->close() safely in destructor
   }
 
-  void Graphics::init() {
+  void Graphics::m_init(const GameState *state) {
     fprintf(stderr, "SDL video drivers:\n");
     int numVideoDrivers = SDL_GetNumVideoDrivers();
     if(numVideoDrivers <= 0) {

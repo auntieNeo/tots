@@ -14,6 +14,7 @@ namespace tots {
       ~SubsystemThread();
 
       void run(Subsystem *subsystem);
+      void run_init(Subsystem *subsystem);
 
     protected:
       SDL_atomic_t m_free;
@@ -21,6 +22,7 @@ namespace tots {
     private:
       GameState *m_gameState;
       Subsystem *m_currentSubsystem;
+      bool m_init;
 
       SDL_Thread *m_sdlThread;
       SDL_sem *m_runSemaphore;
