@@ -17,7 +17,7 @@ namespace tots {
       void close();
 
       void addComponent(GraphicsComponent *component);
-      Subsystem::Hints hints() const { return Subsystem::HOG_THREAD; }
+//      Subsystem::Hints hints() const { return Subsystem::HOG_THREAD; }
 
     protected:
       void m_init(const GameState *state);

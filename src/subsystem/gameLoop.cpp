@@ -26,7 +26,7 @@ namespace tots {
     // TODO: populate the game state
 
     // create a pool of threads
-    m_threads = new ThreadPool(NUM_THREADS);
+    m_threads = new ThreadPool(1);
 
     // create each of the subsystems
     // TODO: try to move subsystem-specific code out of here
