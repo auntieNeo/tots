@@ -19,18 +19,20 @@ namespace tots {
       ThreadPool(size_t numThreads);
       ~ThreadPool();
 
+      void registerSubsystem(Subsystem *subsystem);
       void run(Subsystem *subsystem, SubsystemThread::Command command);
 
     protected:
-      SDL_sem *m_threadSemaphore;
-      SDL_atomic_t m_done;
-
       void waitThreadSemaphore() { SDL_SemWait(m_threadSemaphore); }
       void postThreadSemaphore() { SDL_SemPost(m_threadSemaphore); }
 
     private:
+      // create an empty game state to share among the threads
+      GameState *m_gs;
+
       WorkerThread **m_threads;
       size_t m_numThreads;
+      SDL_sem *m_threadSemaphore;
 
       HoggedThread **m_hoggedThreads;
       size_t m_numHoggedThreads;

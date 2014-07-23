@@ -10,6 +10,7 @@ namespace tots {
   class SubsystemThread;
   class Subsystem {
     friend class SubsystemThread;
+    friend class WorkerThread;
     friend class ThreadPool;
     public:
       enum Hints { NONE = 0, HOG_THREAD = 2 };
@@ -21,6 +22,8 @@ namespace tots {
       void update(const GameState *state);
       void close(const GameState *state);
       virtual Hints hints() const { return NONE; };
+
+      virtual const char *name() const = 0;
 
     protected:
       virtual void m_init(const GameState *state) = 0;

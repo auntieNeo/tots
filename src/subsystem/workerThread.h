@@ -3,6 +3,8 @@
 
 #include <SDL2/SDL_thread.h>
 
+#include "subsystemThread.h"
+
 namespace tots {
   class ThreadPool;
   class WorkerThread : public SubsystemThread {
@@ -14,9 +16,9 @@ namespace tots {
       void run(Subsystem *subsystem, SubsystemThread::Command command);
 
     private:
-
       ThreadPool *m_pool;
       int m_threadIndex;
+      SubsystemThread::Command m_command;
 
       SDL_ThreadFunction getRunCallback() const { return m_run; }
 

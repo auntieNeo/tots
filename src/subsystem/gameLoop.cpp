@@ -31,6 +31,7 @@ namespace tots {
     // create each of the subsystems
     // TODO: try to move subsystem-specific code out of here
     m_graphics = new Graphics();  // TODO: use factory method (for supporting Direct3D, etc.)
+    m_threads->registerSubsystem(static_cast<Subsystem *>(m_graphics));
     m_threads->run(static_cast<Subsystem *>(m_graphics), SubsystemThread::INIT);
   }
 

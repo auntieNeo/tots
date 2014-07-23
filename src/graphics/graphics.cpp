@@ -167,20 +167,6 @@ namespace tots {
     // TODO: delete components
   }
 
-  void Graphics::m_update(const GameState *state) {
-    // TODO: set graphics context
-    // TODO: buffering, etc.
-    printf("In graphics thread.\n");
-    glClear(0xFFFF);
-    for(size_t i = 0; i < m_numComponents; ++i) {
-      printf("drawing...\n");
-      m_components[i]->draw(this);
-    }
-
-    // swap the buffer to actually display it
-    SDL_GL_SwapWindow(m_window);
-  }
-
   void Graphics::addComponent(GraphicsComponent *component) {
     assert(m_numComponents < MAX_COMPONENTS);
     m_components[m_numComponents++] = component;
@@ -294,5 +280,17 @@ namespace tots {
     (*shaders)[(*numShaders)++] = shader;
 
     return shader;
+  }
+
+  void Graphics::m_update(const GameState *state) {
+    // TODO: set graphics context
+    // TODO: buffering, etc.
+    glClear(0xFFFF);
+    for(size_t i = 0; i < m_numComponents; ++i) {
+      m_components[i]->draw(this);
+    }
+
+    // swap the buffer to actually display it
+    SDL_GL_SwapWindow(m_window);
   }
 }

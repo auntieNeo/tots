@@ -1,2 +1,2 @@
-add_executable(tots main.cpp log.cpp graphics/component.cpp graphics/graphics.cpp graphics/opengl.cpp graphics/triangle.cpp subsystem/aggregateQueue.cpp subsystem/eventQueue.cpp subsystem/gameLoop.cpp subsystem/gameState.cpp subsystem/subsystem.cpp subsystem/subsystemThread.cpp subsystem/threadPool.cpp)
+add_executable(tots main.cpp log.cpp graphics/component.cpp graphics/graphics.cpp graphics/opengl.cpp graphics/triangle.cpp subsystem/aggregateQueue.cpp subsystem/eventQueue.cpp subsystem/gameLoop.cpp subsystem/gameState.cpp subsystem/hoggedThread.cpp subsystem/subsystem.cpp subsystem/subsystemThread.cpp subsystem/threadPool.cpp subsystem/workerThread.cpp)
 target_link_libraries(tots ${OPENGL_LIBRARIES} ${SDL2_LIBRARIES})

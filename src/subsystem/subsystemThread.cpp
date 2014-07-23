@@ -7,26 +7,29 @@
 #include <SDL2/SDL_thread.h>
 
 namespace tots {
-  SubsystemThread::SubsystemThread(const char *name, const GameState *gameState) {
+  SubsystemThread::SubsystemThread(const GameState *gameState) {
     m_currentSubsystem = NULL;
 
     // copy the game state from the given gameState
     m_gameState = new GameState(*gameState);
 
-    // mark this thread as not free (it's not ready yet)
-    SDL_AtomicSet(&m_free, 0);
+    // mark this thread as not free and not done (it's not even ready yet)
+    setFree(false);
+    setDone(false);
 
     // create an SDL semaphore to control our thread
     m_runSemaphore = SDL_CreateSemaphore(0);
+  }
 
+  void SubsystemThread::init(const char *name) {
     // create our SDL thread
+    // FIXME: this line needs to be executed after the object has been constructed... there must be a better way
     m_sdlThread = SDL_CreateThread(getRunCallback(), name, this);
-    delete[] threadName;
   }
 
   SubsystemThread::~SubsystemThread() {
-    assert(SDL_AtomicGet(&(m_pool->m_done)));
-    // wait for our thread
+    // mark as done and wait for our thread
+    setDone(true);
     SDL_WaitThread(m_sdlThread, NULL);
 
     // destroy our semaphore

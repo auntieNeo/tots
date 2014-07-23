@@ -2,18 +2,19 @@
 #define SUBSYSTEM_THREAD_H_
 
 #include "../common.h"
+#include "subsystem.h"
 
 #include <SDL2/SDL_thread.h>
 
 namespace tots {
   class GameState;
-  class Subsystem;
   class SubsystemThread {
     public:
       enum Command { INIT = 1, UPDATE, CLOSE };
 
-      SubsystemThread(const char *name, const GameState *gameState);
-      ~SubsystemThread();
+      SubsystemThread(const GameState *gameState);
+      virtual ~SubsystemThread();
+      void init(const char *name);
 
       virtual void run(Subsystem *subsystem, SubsystemThread::Command command) = 0;
 
@@ -22,7 +23,11 @@ namespace tots {
     protected:
       void setFree(bool free) { SDL_AtomicSet(&m_free, free); }
 
+      bool isDone() { return SDL_AtomicGet(&m_done); }
+      void setDone(bool done) { SDL_AtomicSet(&m_done, done); }
+
       Subsystem *currentSubsystem() const { return m_currentSubsystem; }
+      void setCurrentSubsystem(Subsystem *subsystem) { m_currentSubsystem = subsystem; }
 
       void waitRun() { SDL_SemWait(m_runSemaphore); }
       void signalRun() { assert(SDL_SemValue(m_runSemaphore) == 0);
@@ -50,9 +55,7 @@ namespace tots {
 
       SDL_Thread *m_sdlThread;
       SDL_sem *m_runSemaphore;
-      SDL_atomic_t m_free;
-
-      void setCurrentSubsystem(Subsystem *subsystem) { m_currentSubsystem = subsystem; }
+      SDL_atomic_t m_free, m_done;
 
       virtual SDL_ThreadFunction getRunCallback() const = 0;
 
