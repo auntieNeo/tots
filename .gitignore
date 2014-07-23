@@ -9,3 +9,6 @@ cmake_install.cmake
 src/tots
 documentation/html
 documentation/latex
+*.vcxproj
+*.vcxproj.filters
+*.sln
