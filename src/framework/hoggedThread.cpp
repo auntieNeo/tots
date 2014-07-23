@@ -15,6 +15,9 @@ namespace tots {
     // set the command
     m_command = command;  // TODO: move this into SubsystemThread
 
+    // make sure the subsystem is set (it should never change anyway)
+    assert(currentSubsystem() == subsystem);
+
     // mark this thread as not free
     this->setFree(false);
 
@@ -27,6 +30,9 @@ namespace tots {
     while(!self->isDone()) {
       // mark this thread as free
       self->setFree(true);
+
+      // TODO: let main thread know we're available
+      self->postThreadSemaphore();
 
       // wait for run signal (when the main thread wants us to run)
       self->waitRun();

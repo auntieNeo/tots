@@ -1,22 +1,14 @@
 #include "gameLoop.h"
 
-#include "../graphics/graphics.h"
-#include "../graphics/triangle.h"
 #include "aggregateQueue.h"
 #include "gameState.h"
 #include "threadPool.h"
+#include "subsystem.h"
 
 #define NUM_THREADS 4
 
 namespace tots {
-  GameLoop::GameLoop() {
-  /* TODO:
-   * Create a pool of threads.
-   * Create a master GameState object.
-   * Create GameState objects with those threads.
-   * Copy the GameState object into each thread.
-   */
-
+  GameLoop::GameLoop(Subsystem **subsystems, size_t numSubsystems) {
     // create the master GameState object
     m_state = new GameState();  // FIXME: we might not even need this...
 
@@ -28,18 +20,25 @@ namespace tots {
     // create a pool of threads
     m_threads = new ThreadPool(1);
 
-    // create each of the subsystems
-    // TODO: try to move subsystem-specific code out of here
-    m_graphics = new Graphics();  // TODO: use factory method (for supporting Direct3D, etc.)
-    m_threads->registerSubsystem(static_cast<Subsystem *>(m_graphics));
-    m_threads->run(static_cast<Subsystem *>(m_graphics), SubsystemThread::INIT);
+    // copy the subsystem pointers
+    m_numSubsystems = numSubsystems;
+    m_subsystems = new Subsystem*[numSubsystems];
+    memcpy(m_subsystems, subsystems, sizeof(Subsystem *) * numSubsystems);
+
+    // register each subsystem
+    m_threads->registerSubsystems(m_subsystems, m_numSubsystems);
+
+    // initialize each subsystem
+    for(size_t i = 0; i < m_numSubsystems; ++i) {
+      m_threads->run(m_subsystems[i], SubsystemThread::INIT);
+    }
   }
 
   GameLoop::~GameLoop() {
-    delete m_graphics;
     delete m_threads;
     delete m_queue;
     delete m_state;
+    delete[] m_subsystems;
   }
 
   void GameLoop::run() {
@@ -70,7 +69,9 @@ namespace tots {
       // graphics run schedule:
       // run graphics thread for every frame
       // FIXME: Need to actually wait for subsystems to be finished. This only hasn't crashed because drawing one triangle is fast. <_<
-      m_threads->run(static_cast<Subsystem *>(m_graphics), SubsystemThread::UPDATE);
+      for(size_t i = 0; i < m_numSubsystems; ++i) {
+        m_threads->run(m_subsystems[i], SubsystemThread::UPDATE);  // FIXME: don't actually schedule subsystems like this
+      }
 
       // audio run schedule:
       // TODO: run the audio thread whenever possible at least once per frame
@@ -90,8 +91,9 @@ namespace tots {
       // TODO: timeout and /stop/ dropping frames
     }
 
-    // TODO: close all of the subsystems
-    // FIXME: run close through m_threads
-    m_graphics->close();
+    // close all of the subsystems
+    for(size_t i = 0; i < m_numSubsystems; ++i) {
+      m_threads->run(m_subsystems[i], SubsystemThread::CLOSE);
+    }
   }
 }

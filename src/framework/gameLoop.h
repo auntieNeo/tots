@@ -1,6 +1,8 @@
 #ifndef GAME_LOOP_H_
 #define GAME_LOOP_H_
 
+#include "../common.h"
+
 /**
  * GameLoop implements a non-locking game loop that shares data between
  * subsystem threads using an aggregate command queue and multiple copies of
@@ -10,19 +12,11 @@
 namespace tots {
   class GameState;
   class AggregateQueue;
-
-  class AudioSubsystem;
-  class BehaviorSubsystem;
-  class CollisionSubsystem;
-  class Graphics;
-  class PhysicsSubsystem;
-  class ResourceSubsystem;
-
   class ThreadPool;
-
+  class Subsystem;
   class GameLoop {
     public:
-      GameLoop();
+      GameLoop(Subsystem **subsystems, size_t numSubsystems);
       ~GameLoop();
 
       void run();
@@ -31,12 +25,8 @@ namespace tots {
       GameState *m_state;
       AggregateQueue *m_queue;
 
-      ResourceSubsystem *m_resource;
-      BehaviorSubsystem *m_behavior;
-      CollisionSubsystem *m_collision;
-      PhysicsSubsystem *m_physics;
-      Graphics *m_graphics;
-      AudioSubsystem *m_audio;
+      Subsystem **m_subsystems;
+      size_t m_numSubsystems;
 
       ThreadPool *m_threads;
   };
