@@ -2,7 +2,7 @@
 #define GRAPHICS_H_
 
 #include "opengl.h"
-#include "../subsystem/subsystem.h"
+#include "../framework/subsystem.h"
 
 #include <cstddef>
 

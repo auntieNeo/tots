@@ -1,2 +1,5 @@
-add_executable(tots main.cpp log.cpp graphics/component.cpp graphics/graphics.cpp graphics/opengl.cpp graphics/triangle.cpp subsystem/aggregateQueue.cpp subsystem/eventQueue.cpp subsystem/gameLoop.cpp subsystem/gameState.cpp subsystem/hoggedThread.cpp subsystem/subsystem.cpp subsystem/subsystemThread.cpp subsystem/threadPool.cpp subsystem/workerThread.cpp)
-target_link_libraries(tots ${OPENGL_LIBRARIES} ${SDL2_LIBRARIES})
+add_executable(tots main.cpp log.cpp)
+target_link_libraries(tots framework graphics ${OPENGL_LIBRARIES} ${SDL2_LIBRARIES})
+
+add_subdirectory("./framework")
+add_subdirectory("./graphics")

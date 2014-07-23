@@ -4,7 +4,7 @@
 #include "graphics/graphics.h"
 #include "graphics/triangle.h"
 
-#include "subsystem/gameLoop.h"
+#include "framework/gameLoop.h"
 
 #include <SDL2/SDL.h>
 #include <cstdio>
