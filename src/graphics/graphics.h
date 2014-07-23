@@ -22,6 +22,7 @@ namespace tots {
     protected:
       void m_init(const GameState *state);
       void m_update(const GameState *state);
+      void m_close(const GameState *state);
 
     private:
       SDL_Window *m_window;

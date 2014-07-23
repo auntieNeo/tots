@@ -151,7 +151,7 @@ namespace tots {
     addComponent(triangle);
   }
 
-  void Graphics::close() {
+  void Graphics::m_close(const GameState *state) {
     free(m_fragShaders);
     free(m_vertShaders);
 

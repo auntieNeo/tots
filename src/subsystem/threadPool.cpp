@@ -19,10 +19,10 @@ namespace tots {
 
     // create the threads
     assert(numThreads <= MAX_THREADS);
-    m_threads = new SubsystemThread*[MAX_THREADS];
-    m_hoggedThreads = new SubsystemThread*[MAX_THREADS];
+    m_threads = new WorkerThread*[MAX_THREADS];
+    m_hoggedThreads = new HoggedThread*[MAX_THREADS];
     for(size_t i = 0; i < numThreads; ++i) {
-      m_threads[i] = new SubsystemThread(i, this, &gs);
+      m_threads[i] = new WorkerThread(i, this, &gs);
     }
   }
 
@@ -40,55 +40,28 @@ namespace tots {
     delete[] m_hoggedThreads;
   }
 
-  // FIXME: duplicated code here
-  void ThreadPool::init(Subsystem *subsystem) {
-    // acquire a thread for a hog
-    if(subsystem->hints() & Subsystem::HOG_THREAD) {
-      assert(m_numThreads >= 2);  // FIXME: come up with a strategy for increasing the number of threads when this assertion fails
-      assert(subsystem->m_hoggedThread == NULL);
-      
-      subsystem->m_hoggedThread = m_threads[--m_numThreads];
-      m_hoggedThreads[m_numHoggedThreads++] = subsystem->m_hoggedThread;
-
-      // FIXME: We don't even wait for the thread or decrement m_threadSemaphore here. This is obviously broken. Need to refactor ASAP.
-      // initialize the subsystem on the hogged thread
-      subsystem->m_hoggedThread->run_init(subsystem);
-      return;
-    }
-
-    // wait for a free thread
-    SDL_SemWait(m_threadSemaphore);
-
-    // find the first free thread
-    int threadIndex = -1;
-    for(size_t i = 0; i < m_numThreads; ++i) {
-      if(SDL_AtomicGet(&(m_threads[i]->m_free))) {
-        threadIndex = i;
-        break;
-      }
-    }
-    assert(threadIndex != -1);
-
-    // initialize the subsystem on that thread
-    m_threads[threadIndex]->run_init(subsystem);
-  }
-
-  // FIXME: duplicated code here
-  void ThreadPool::run(Subsystem *subsystem) {
+  void ThreadPool::run(Subsystem *subsystem, SubsystemThread::Command command) {
     // run with a hogged thread
-    if(subsystem->m_hoggedThread != NULL) {
+    if(subsystem->hints() & Subsystem::HOG_THREAD) {
+      if(subsystem->m_hoggedThread == NULL) {
+        assert(m_numThreads >= 2);  // FIXME: come up with a strategy for increasing the number of threads when this assertion fails
+
+        // create a thread for a hog
+        assert(m_numHoggedThreads < MAX_THREADS);
+        m_hoggedThreads[m_numHoggedThreads++] = new HoggedThread(subsystem->name(), this, &gs);
+      }
+      // run with the hogged thread
       assert(SDL_AtomicGet(&(subsystem->m_hoggedThread->m_free)));
-      subsystem->m_hoggedThread->run(subsystem);
+      subsystem->m_hoggedThread->run(subsystem, init);
       return;
     }
 
     // wait for a free thread
-    SDL_SemWait(m_threadSemaphore);
+    waitThreadSemaphore();
 
     // try using the same thread, to avoid cache misses
-    // FIXME: assert to prevent subsystems from running on hogged threads in this way
-    if(subsystem->m_lastThread != NULL && SDL_AtomicGet(&(subsystem->m_lastThread->m_free))) {
-      subsystem->m_lastThread->run(subsystem);
+    if(subsystem->m_lastThread != NULL && subsystem->m_lastThread->isFree()) {
+      subsystem->m_lastThread->run(subsystem, init);
       return;
     }
 
@@ -103,6 +76,6 @@ namespace tots {
     assert(threadIndex != -1);
 
     // run the subsystem on that thread
-    m_threads[threadIndex]->run(subsystem);
+    m_threads[threadIndex]->run(subsystem, init);
   }
 }

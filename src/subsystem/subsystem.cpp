@@ -18,4 +18,9 @@ namespace tots {
     // TODO: determine and update the delta time in m_dt
     m_update(state);
   }
+
+  void Subsystem::close(const GameState *state) {
+    // TODO: close stuff I guess
+    m_close(state);
+  }
 }

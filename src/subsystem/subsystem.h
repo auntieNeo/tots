@@ -19,12 +19,13 @@ namespace tots {
 
       void init(const GameState *state);
       void update(const GameState *state);
-      // TODO: add close() member function
+      void close(const GameState *state);
       virtual Hints hints() const { return NONE; };
 
     protected:
       virtual void m_init(const GameState *state) = 0;
       virtual void m_update(const GameState *state) = 0;
+      virtual void m_close(const GameState *state) = 0;
       size_t m_dt;
 
     private:

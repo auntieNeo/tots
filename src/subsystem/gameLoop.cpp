@@ -31,7 +31,7 @@ namespace tots {
     // create each of the subsystems
     // TODO: try to move subsystem-specific code out of here
     m_graphics = new Graphics();  // TODO: use factory method (for supporting Direct3D, etc.)
-    m_threads->init(static_cast<Subsystem *>(m_graphics));
+    m_threads->run(static_cast<Subsystem *>(m_graphics), SubsystemThread::INIT);
   }
 
   GameLoop::~GameLoop() {
@@ -68,7 +68,8 @@ namespace tots {
 
       // graphics run schedule:
       // run graphics thread for every frame
-      m_threads->run(static_cast<Subsystem *>(m_graphics));
+      // FIXME: Need to actually wait for subsystems to be finished. This only hasn't crashed because drawing one triangle is fast. <_<
+      m_threads->run(static_cast<Subsystem *>(m_graphics), SubsystemThread::UPDATE);
 
       // audio run schedule:
       // TODO: run the audio thread whenever possible at least once per frame
@@ -89,6 +90,7 @@ namespace tots {
     }
 
     // TODO: close all of the subsystems
+    // FIXME: run close through m_threads
     m_graphics->close();
   }
 }
