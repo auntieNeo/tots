@@ -12,3 +12,7 @@ documentation/latex
 *.vcxproj
 *.vcxproj.filters
 *.sln
+*.sdf
+*.opensdf
+Win32
+*.dir
