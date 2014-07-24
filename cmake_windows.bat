@@ -1,11 +1,13 @@
 set lib_path=C:\vs_libs
 set glew_version=1.10.0
 set sdl2_version=2.0.3
+set dirent_version=1.20.1
 
 cmake^
  -DCMAKE_INCLUDE_PATH=^
 %lib_path%\glew-%glew_version%\include;^
-%lib_path%\SDL2-%sdl2_version%\include^
+%lib_path%\SDL2-%sdl2_version%\include;^
+%lib_path%\dirent-%dirent_version%\include^
  -DCMAKE_LIBRARY_PATH=^
 %lib_path%\glew-%glew_version%\lib\Release\x64;^
 %lib_path%\glew-%glew_version%\lib\Release\Win32;^

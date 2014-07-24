@@ -20,6 +20,11 @@ find_package(GLEW REQUIRED)
 
 find_package(OpenGL REQUIRED)
 
-include_directories(SYSTEM ${OPENGL_INCLUDE_DIR} ${SDL2_INCLUDE_DIR})
+if(WIN32)
+  find_path(DIRENT_INCLUDE_DIR dirent.h)  # FIXME: need to error when we can't find dirent.h
+  include_directories(SYSTEM ${DIRENT_INCLUDE_DIR})
+endif(WIN32)
+
+include_directories(SYSTEM ${GLEW_INCLUDE_DIR} ${OPENGL_INCLUDE_DIR} ${SDL2_INCLUDE_DIR})
 
 add_subdirectory("${TOTS_SOURCE_DIR}")
