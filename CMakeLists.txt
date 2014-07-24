@@ -16,6 +16,8 @@ if(WIN32)
 endif(WIN32)
 find_package(SDL2 REQUIRED)
 
+find_package(GLEW REQUIRED)
+
 find_package(OpenGL REQUIRED)
 
 include_directories(SYSTEM ${OPENGL_INCLUDE_DIR} ${SDL2_INCLUDE_DIR})
