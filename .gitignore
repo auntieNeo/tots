@@ -16,3 +16,4 @@ documentation/latex
 *.opensdf
 Win32
 *.dir
+*.suo

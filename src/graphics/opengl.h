@@ -28,7 +28,7 @@ GL_EXTERN PFNGLSHADERSOURCEPROC glShaderSource;
 GL_EXTERN PFNGLUSEPROGRAMPROC glUseProgram;
 GL_EXTERN PFNGLVERTEXATTRIBPOINTERPROC glVertexAttribPointer;
 
-#include <SDL2/SDL.h>
+#include <SDL.h>
 
 SDL_GLContext init_OpenGL(SDL_Window *window);
 

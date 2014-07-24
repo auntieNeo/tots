@@ -4,7 +4,7 @@
 #include "../common.h"
 #include "subsystem.h"
 
-#include <SDL2/SDL_thread.h>
+#include <SDL_thread.h>
 
 namespace tots {
   class GameState;

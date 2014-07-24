@@ -1,7 +1,7 @@
 #ifndef HOGGED_THREAD_H_
 #define HOGGED_THREAD_H_
 
-#include <SDL2/SDL_thread.h>
+#include <SDL_thread.h>
 
 #include "subsystemThread.h"
 

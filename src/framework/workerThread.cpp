@@ -4,7 +4,7 @@
 #include "subsystem.h"
 #include "threadPool.h"
 
-#include <SDL2/SDL_thread.h>
+#include <SDL_thread.h>
 
 namespace tots {
   WorkerThread::WorkerThread(int threadIndex, ThreadPool *pool, const GameState *gameState) : SubsystemThread(gameState) {

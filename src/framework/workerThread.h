@@ -1,7 +1,7 @@
 #ifndef WORKER_THREAD_H_
 #define WORKER_THREAD_H_
 
-#include <SDL2/SDL_thread.h>
+#include <SDL_thread.h>
 
 #include "subsystemThread.h"
 

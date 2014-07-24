@@ -5,7 +5,7 @@
 
 #include "subsystemThread.h"
 
-#include <SDL2/SDL_thread.h>
+#include <SDL_thread.h>
 
 namespace tots {
   class Subsystem;
