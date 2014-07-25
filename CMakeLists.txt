@@ -14,7 +14,8 @@ else(WIN32)
 endif(WIN32)
 
 if(WIN32)
-  find_program(ZIP_EXECUTABLE 7z PATHS "$ENV{ProgramFiles}/7-Zip") 
+  # FIXME: this won't find 64bit 7z if cmake is 32bit
+  find_program(ZIP_EXECUTABLE 7z PATHS "$ENV{ProgramFiles}/7-Zip" "$ENV{ProgramFiles(X86)}/7-Zip") 
     if(ZIP_EXECUTABLE)
       file(TO_NATIVE_PATH "${ZIP_EXECUTABLE}" ZIP_EXECUTABLE)
     else(ZIP_EXECUTABLE)
