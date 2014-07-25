@@ -45,7 +45,8 @@ if(WIN32)
   endif()
   set(CMAKE_INCLUDE_PATH "${SDL2_DIR}/include;${CMAKE_INCLUDE_PATH}")
   set(CMAKE_LIBRARY_PATH "${SDL2_DIR}/lib/x86;${CMAKE_LIBRARY_PATH}")
-  set(CMAKE_LIBRARY_PATH "${SDL2_DIR}/lib/x64;${CMAKE_LIBRARY_PATH}")
+# FIXME: need to distinguish 32 bit and 64 bit builds
+#  set(CMAKE_LIBRARY_PATH "${SDL2_DIR}/lib/x64;${CMAKE_LIBRARY_PATH}")
 endif(WIN32)
 find_package(SDL2 REQUIRED)
 
@@ -68,7 +69,8 @@ if(WIN32)
   endif()
   set(CMAKE_INCLUDE_PATH "${GLEW_DIR}/include;${CMAKE_INCLUDE_PATH}")
   set(CMAKE_LIBRARY_PATH "${GLEW_DIR}/lib/Release/Win32;${CMAKE_LIBRARY_PATH}")
-  set(CMAKE_LIBRARY_PATH "${GLEW_DIR}/lib/Release/x64;${CMAKE_LIBRARY_PATH}")
+# FIXME: need to distinguish 32 bit and 64 bit builds
+#  set(CMAKE_LIBRARY_PATH "${GLEW_DIR}/lib/Release/x64;${CMAKE_LIBRARY_PATH}")
 endif(WIN32)
 find_package(GLEW REQUIRED)
 
