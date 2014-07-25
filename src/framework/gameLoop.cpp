@@ -92,6 +92,6 @@ namespace tots {
 
     // TODO: close all of the subsystems
     // FIXME: run close through m_threads
-    m_graphics->close();
+//    m_graphics->close();
   }
 }

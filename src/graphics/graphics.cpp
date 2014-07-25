@@ -6,10 +6,11 @@
 #include "../log.h"
 
 #include <cstdlib>
-#include <dirent.h>
 #include <errno.h>
 #include <string.h>
-#include <unistd.h>
+
+#include <boost/filesystem.hpp>
+namespace fs = boost::filesystem;
 
 #include <cstdio>
 
@@ -173,42 +174,19 @@ namespace tots {
     component->init(this);
   }
 
-  const char *filter_ext;
-  int filterExt(const struct dirent *de) {
-    assert(filter_ext != NULL);
-    size_t ext_len = strlen(filter_ext);
-    const char *match;
-    if((match = strstr(de->d_name, filter_ext)) != NULL)
-      if(match[ext_len] == '\0')
-        return 1;
-    return 0;
-  }
-
   char **Graphics::m_findShaders(const char *dirp, const char *ext, size_t *numShaders) {
-    struct dirent **de;
-    assert(filter_ext == NULL);
-    filter_ext = ext;
-    int n;
-    if((n = scandir(dirp, &de, filterExt, alphasort)) == -1) {  // FIXME: Valgrind says this leaks
-      printf("Graphics::m_findShaders() failed: %s\n", strerror(errno));
-      *numShaders = 0;
-      exit(1);  // FIXME: abort properly here
+    *numShaders = 0;
+    if(!fs::exists(dirp) || !fs::is_directory(dirp)) {
+      log_error("Could not open shader directory: %s", dirp);
     }
-    *numShaders = n;
-    filter_ext = NULL;
+    for(fs::directory_iterator i(dirp); i != fs::directory_iterator(); ++i) {
+      if(strcmp(i->path().extension().string().c_str(), ext) == 0) {
+        *numShaders += 1;
+      }
+      printf("found: %s\n", i->path().c_str());
+    }
     char **result = static_cast<char **>(malloc(sizeof(char *) * (*numShaders)));  // FIXME: check this malloc
-    for(size_t i = 0; i < *numShaders; ++i) {
-      // join the filename back to the dirname
-      char *relative_path = (char *)malloc((strlen(dirp) + strlen(de[i]->d_name) + 2 /* slash and \0 */) * sizeof(char));  // FIXME: use MAX_PATH
-      sprintf(relative_path, "%s/%s", dirp, de[i]->d_name);
-      // get the absolute path
-      result[i] = realpath(relative_path, NULL);  // allocated via malloc(3) as per realpath(3) man page
-      free(relative_path);
-//      free(de[i]->d_name);  // FIXME: not a valid pointer, says free()  // allocated via malloc(3) as per scandir(3) man page
-    }
-    free(de);  // allocated via malloc(3) as per scandir(3) man page
-
-    return result;
+    return result;  // FIXME: actually fill this
   }
 
   GLuint Graphics::m_loadShader(const char *sourcePath, GLenum shaderType) {
@@ -252,7 +230,7 @@ namespace tots {
     }
     size_t num_read = fread(source, 1, fsize, f);
     assert(num_read == (unsigned long)fsize - 1);
-    glShaderSource(shader, 1, &source, NULL);
+    glShaderSource(shader, 1, (const GLchar **)&source, NULL);
     if(check_OpenGL_error("Could not set shader source"))
       exit(1);  // FIXME: abort properly
     free(source);

@@ -8,7 +8,6 @@
 
 #include <SDL.h>
 #include <cstdio>
-#include <unistd.h>
 
 SDL_GLContext init_OpenGL(SDL_Window *window);
 

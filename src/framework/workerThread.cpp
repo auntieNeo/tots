@@ -5,12 +5,13 @@
 #include "threadPool.h"
 
 #include <SDL_thread.h>
+#include <cstdio>
 
 namespace tots {
   WorkerThread::WorkerThread(int threadIndex, ThreadPool *pool, const GameState *gameState) : SubsystemThread(gameState) {
     m_pool = pool;
     char *threadName = new char[256];
-    snprintf(threadName, 256, "Worker Thread %02d", threadIndex);
+    sprintf(threadName, "Worker Thread %02d", threadIndex);
     init(threadName);  // FIXME: this is terrible
     delete[] threadName;
   }

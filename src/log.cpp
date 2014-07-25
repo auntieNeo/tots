@@ -1,6 +1,7 @@
 #include "log.h"
 
 #include <cstdarg>
+#include <cstdio>
 #include <SDL.h>
 
 // TODO: consolidate these logging functions

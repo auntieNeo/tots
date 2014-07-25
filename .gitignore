@@ -11,9 +11,13 @@ documentation/html
 documentation/latex
 *.vcxproj
 *.vcxproj.filters
+*.vcxproj.user
 *.sln
 *.sdf
 *.opensdf
 Win32
 *.dir
 *.suo
+vs_libs
+Debug
+*~

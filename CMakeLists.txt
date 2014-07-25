@@ -7,24 +7,23 @@ set (CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 set (TOTS_SOURCE_DIR src)
 
-set(CMAKE_CXX_FLAGS "-g -Wall")
-
 if(WIN32)
-  if(NOT DEFINED ENV{SDL2DIR})
-    message(FATAL_ERROR "Please set the SDL2DIR environment variable to the path of the SDL2 library.\n")
-  endif()
+  set(CMAKE_CXX_FLAGS "/EHsc")
+else(WIN32)
+  set(CMAKE_CXX_FLAGS "-g -Wall")
 endif(WIN32)
+
 find_package(SDL2 REQUIRED)
 
 find_package(GLEW REQUIRED)
 
 find_package(OpenGL REQUIRED)
 
-if(WIN32)
-  find_path(DIRENT_INCLUDE_DIR dirent.h)  # FIXME: need to error when we can't find dirent.h
-  include_directories(SYSTEM ${DIRENT_INCLUDE_DIR})
-endif(WIN32)
+set(Boost_USE_STATIC_LIBS ON)
+set(Boost_USE_MULTITHREADED ON)
+find_package(Boost REQUIRED COMPONENTS exception filesystem system)
 
-include_directories(SYSTEM ${GLEW_INCLUDE_DIR} ${OPENGL_INCLUDE_DIR} ${SDL2_INCLUDE_DIR})
+include_directories(SYSTEM ${Boost_INCLUDE_DIRS} ${GLEW_INCLUDE_DIR} ${OPENGL_INCLUDE_DIR} ${SDL2_INCLUDE_DIR})
+#link_directories(${Boost_LIBRARY_DIRS} ${CMAKE_SOURCE_DIR}/vs_libs/glew-1.10.0/lib/Release/Win32 ${CMAKE_SOURCE_DIR}/vs_libs/SDL2-2.0.3/lib/x86)
 
 add_subdirectory("${TOTS_SOURCE_DIR}")
