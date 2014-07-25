@@ -13,8 +13,4 @@ cmake^
  -DCMAKE_LIBRARY_PATH=^
 %lib_path%\glew-%glew_version%\lib\Release\Win32;^
 %lib_path%\SDL2-%sdl2_version%\lib^
- -DBOOST_INCLUDEDIR=^
-%lib_path%\boost_%boost_version%\include^
- -DBOOST_LIBRARYDIR=^
-%lib_path%\boost_%boost_version%\stage\lib^
  %~dp0

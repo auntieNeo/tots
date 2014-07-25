@@ -51,12 +51,27 @@ find_package(OpenGL REQUIRED)
 if(WIN32)
   set(BOOST_VERSION 1_55_0)
   set(BOOST_ARCHIVE "boost_${BOOST_VERSION}.zip")
-  if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/vs_libs/${BOOST_ARCHIVE}")
-    message("Downloading '${BOOST_ARCHIVE}' to '${CMAKE_CURRENT_SOURCE_DIR}/vs_libs/'...")
+  set(BOOST_ARCHIVE_PATH "${VS_LIB_DIR}/${BOOST_ARCHIVE}")
+  if(NOT EXISTS "${BOOST_ARCHIVE_PATH}")
+    message("Downloading '${BOOST_ARCHIVE}' to '${VS_LIB_DIR_NATIVE}'...")
     file(DOWNLOAD
          "http://softlayer-dal.dl.sourceforge.net/project/boost/boost/1.55.0/${BOOST_ARCHIVE}"
-         "${CMAKE_CURRENT_SOURCE_DIR}/vs_libs/boost_1_55_0.zip"
+         "${BOOST_ARCHIVE_PATH}"
          SHOW_PROGRESS)
+  endif()
+  set(BOOST_ROOT "${VS_LIB_DIR}/boost_${BOOST_VERSION}")
+  if(NOT EXISTS "${BOOST_ROOT}")
+    message("Extracting '${BOOST_ARCHIVE}'...")
+    file(TO_NATIVE_PATH "${BOOST_ARCHIVE_PATH}" BOOST_ARCHIVE_PATH_NATIVE)
+    execute_process(COMMAND "${ZIP_EXECUTABLE}" x -tzip "-o${VS_LIB_DIR_NATIVE}" "${BOOST_ARCHIVE_PATH_NATIVE}")
+  endif()
+  if(NOT EXISTS "${BOOST_ROOT}/b2.exe")
+    execute_process(COMMAND "bootstrap.bat"
+                    WORKING_DIRECTORY "${BOOST_ROOT}")
+  endif()
+  if(NOT EXISTS "${BOOST_ROOT}/lib")
+    execute_process(COMMAND "b2.exe" install "--prefix=${BOOST_ROOT}"
+                    WORKING_DIRECTORY "${BOOST_ROOT}")
   endif()
 endif(WIN32)
 set(Boost_USE_STATIC_LIBS ON)
