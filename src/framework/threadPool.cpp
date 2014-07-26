@@ -11,7 +11,7 @@
 #define MAX_THREADS 16
 
 namespace tots {
-  ThreadPool::ThreadPool(size_t numThreads) : m_numThreads(numThreads), m_hoggedThreads(0) {
+  ThreadPool::ThreadPool(size_t numThreads) : m_numThreads(numThreads), m_numHoggedThreads(0) {
     // initiate the SDL thread synchronization primitives
     m_threadSemaphore = SDL_CreateSemaphore(0);
 
