@@ -47,7 +47,7 @@ namespace tots {
       fprintf(stderr, "  %s\n", SDL_GetVideoDriver(i));
     }
 
-    if(SDL_VideoInit("x11") != 0) {
+    if(SDL_VideoInit("windows") != 0) {
       log_SDL_error("Unable to load SDL video driver");
       exit(1);  // FIXME: abort properly
     }

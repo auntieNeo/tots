@@ -101,9 +101,9 @@ if(WIN32)
     execute_process(COMMAND "b2.exe" install "--prefix=${BOOST_ROOT}"
                     WORKING_DIRECTORY "${BOOST_ROOT}")
   endif()
+  set(Boost_USE_STATIC_LIBS ON)
+  set(Boost_USE_MULTITHREADED ON)
 endif(WIN32)
-#set(Boost_USE_STATIC_LIBS ON)
-#set(Boost_USE_MULTITHREADED ON)
 find_package(Boost REQUIRED COMPONENTS exception filesystem system)
 
 include_directories(SYSTEM ${Boost_INCLUDE_DIRS} ${GLEW_INCLUDE_DIR} ${OPENGL_INCLUDE_DIR} ${SDL2_INCLUDE_DIR})
