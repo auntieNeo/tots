@@ -9,8 +9,10 @@ set (TOTS_SOURCE_DIR src)
 
 if(WIN32)
   set(CMAKE_CXX_FLAGS "/EHsc")
+  add_definitions(-DWIN32)
 else(WIN32)
   set(CMAKE_CXX_FLAGS "-g -Wall")
+  add_definitions(-DLINUX)
 endif(WIN32)
 
 if(WIN32)

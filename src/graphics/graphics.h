@@ -14,8 +14,6 @@ namespace tots {
       Graphics();
       ~Graphics();
 
-      void close();
-
       void addComponent(GraphicsComponent *component);
       Subsystem::Hints hints() const { return Subsystem::HOG_THREAD; }
 

@@ -40,13 +40,17 @@ namespace tots {
     delete m_gs;
   }
 
-  void ThreadPool::registerSubsystem(Subsystem *subsystem) {
-    if(subsystem->hints() & Subsystem::HOG_THREAD) {
-      assert(subsystem->m_hoggedThread == NULL);
+  void ThreadPool::registerSubsystems(Subsystem **subsystems, size_t numSubsystems) {
+    for(size_t i = 0; i < numSubsystems; ++i) {
+      if(subsystems[i]->hints() & Subsystem::HOG_THREAD) {
+        assert(subsystems[i]->m_hoggedThread == NULL);
 
-      // create a thread for a hog
-      assert(m_numHoggedThreads < MAX_THREADS);
-      m_hoggedThreads[m_numHoggedThreads++] = new HoggedThread(subsystem->name(), m_gs);
+        // create a thread for a hog
+        assert(m_numHoggedThreads < MAX_THREADS);
+        subsystems[i]->m_hoggedThread = m_hoggedThreads[m_numHoggedThreads++] = new HoggedThread(subsystems[i]->name(), m_gs);
+        // change the current subsystem (it shouldn't ever change)
+        subsystems[i]->m_hoggedThread->setCurrentSubsystem(subsystems[i]);
+      }
     }
   }
 

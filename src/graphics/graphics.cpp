@@ -9,6 +9,12 @@
 #include <errno.h>
 #include <string.h>
 
+#ifdef WIN32
+#define VIDEO_DRIVER "windows"
+#else
+#define VIDEO_DRIVER "x11"
+#endif
+
 #include <boost/filesystem.hpp>
 namespace fs = boost::filesystem;
 
@@ -47,7 +53,7 @@ namespace tots {
       fprintf(stderr, "  %s\n", SDL_GetVideoDriver(i));
     }
 
-    if(SDL_VideoInit("windows") != 0) {
+    if(SDL_VideoInit(VIDEO_DRIVER) != 0) {
       log_SDL_error("Unable to load SDL video driver");
       exit(1);  // FIXME: abort properly
     }

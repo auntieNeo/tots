@@ -3,3 +3,4 @@ target_link_libraries(tots framework graphics ${Boost_LIBRARIES} ${GLEW_LIBRARIE
 
 add_subdirectory("./framework")
 add_subdirectory("./graphics")
+add_subdirectory("./physics")

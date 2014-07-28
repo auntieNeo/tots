@@ -9,6 +9,7 @@
 namespace tots {
   class GameState;
   class SubsystemThread {
+    friend class ThreadPool;
     public:
       enum Command { INIT = 1, UPDATE, CLOSE };
 
