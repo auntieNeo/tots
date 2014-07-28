@@ -2,10 +2,12 @@
 
 namespace tots {
   HoggedThread::HoggedThread(const char *name, const GameState *gameState) : SubsystemThread(gameState) {
+    m_threadSemaphore = SDL_CreateSemaphore(0);
     init(name);
   }
 
   HoggedThread::~HoggedThread() {
+    SDL_DestroySemaphore(m_threadSemaphore);
   }
 
   void HoggedThread::run(Subsystem *subsystem, SubsystemThread::Command command) {
@@ -31,7 +33,7 @@ namespace tots {
       // mark this thread as free
       self->setFree(true);
 
-      // TODO: let main thread know we're available
+      // let main thread know we're available
       self->postThreadSemaphore();
 
       // wait for run signal (when the main thread wants us to run)

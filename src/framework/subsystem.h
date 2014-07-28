@@ -7,6 +7,7 @@ namespace tots {
   class GameState;
   class EventQueue;
   class ThreadPool;
+  class HoggedThread;
   class SubsystemThread;
   class Subsystem {
     friend class SubsystemThread;
@@ -33,7 +34,8 @@ namespace tots {
 
     private:
       EventQueue *m_input, *m_output;
-      SubsystemThread *m_lastThread, *m_hoggedThread;
+      SubsystemThread *m_lastThread;
+      HoggedThread *m_hoggedThread;
   };
 }
 

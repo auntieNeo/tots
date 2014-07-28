@@ -51,18 +51,22 @@ namespace tots {
         // change the current subsystem (it shouldn't ever change)
         subsystems[i]->m_hoggedThread->setCurrentSubsystem(subsystems[i]);
       }
+
+      // TODO: subscribe subsystems to message queues
     }
   }
 
   void ThreadPool::run(Subsystem *subsystem, SubsystemThread::Command command) {
+    // FIXME: These need to be queued. This method should never, ever block.
     if(subsystem->m_hoggedThread != NULL) {
       // run with the hogged thread
+      subsystem->m_hoggedThread->waitThreadSemaphore();  // FIXME: should not block here
       subsystem->m_hoggedThread->run(subsystem, command);
       return;
     }
 
     // wait for a free thread
-    waitThreadSemaphore();
+    waitThreadSemaphore();  // FIXME: should not block here
 
     // try using the same thread, to avoid cache misses
     if(subsystem->m_lastThread != NULL && subsystem->m_lastThread->isFree()) {
@@ -82,5 +86,9 @@ namespace tots {
 
     // run the subsystem on that thread
     m_threads[threadIndex]->run(subsystem, command);
+  }
+
+  void ThreadPool::flush() {
+    // TODO: signal subsystems to run based on their priority and what threads are available
   }
 }

@@ -21,6 +21,7 @@ namespace tots {
 
       void registerSubsystems(Subsystem **subsystems, size_t numSubsystems);
       void run(Subsystem *subsystem, SubsystemThread::Command command);
+      void flush();
 
     protected:
       void waitThreadSemaphore() { SDL_SemWait(m_threadSemaphore); }

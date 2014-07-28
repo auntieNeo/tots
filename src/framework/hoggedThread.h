@@ -15,11 +15,16 @@ namespace tots {
 
       void run(Subsystem *subsystem, SubsystemThread::Command command);
 
+      void waitThreadSemaphore() { SDL_SemWait(m_threadSemaphore); }
+
     private:
       SubsystemThread::Command m_command;
+      SDL_sem *m_threadSemaphore;
 
       virtual SDL_ThreadFunction getRunCallback() const { return m_run; };
       static int m_run(void *self);
+
+      void postThreadSemaphore() { SDL_SemPost(m_threadSemaphore); }
   };
 }
 
