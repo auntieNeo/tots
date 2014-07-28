@@ -1,0 +1,50 @@
+/**
+ * \page framework
+ *
+ * Framework
+ * =========
+ * 
+ * The Tots framework is a collection of classes that stand behind all of the
+ * subsystems in the Tots engine. The framework facilitates the creation of
+ * subsystem threads, communication between those threads, and maintenance of
+ * the game state. This allows the subsystems to focus on their specific tasks
+ * while reducing coupling between subsystems. This reduced coupling is vital
+ * to the parallel nature of the Tots engine.
+ *
+ * The framework is written without any dependencies or special regard for any
+ * of the subsystems that use it. This design choice reduces the possibility of
+ * coupling between threads or subsystems, and also adds to the flexibility of
+ * the engine.
+ *
+ * Game Loop
+ * ---------
+ * The Tots framework provides a GameLoop class that at the heart of the
+ * engine's execution. The game loop is responsible for dispatching subsystem
+ * threads, facilitating communication between subsystem threads, prioritizing
+ * subsystems, synchronizing threads with the framerate, and synchronizing threads
+ * with other threads, among other execution-related tasks. Alone, the game loop
+ * is unaware of the 
+ *
+ * Subsystem Threads
+ * -----------------
+ * Subsystems registered with the game loop are dispatched on threads separate
+ * from the main thread. Tots uses a non-locking thread design, which means that
+ * communication between threads does not involve semaphores or mutexes. This
+ * avoids untold number of costly context switches to and from the operating
+ * system.
+ *
+ * A non-locking design comes at a cost, though; communication between threads
+ * is limited to asynchronous message passing through a message queue. This
+ * message passing is facilitated by the framework and is explained in detail
+ * later in this document.
+ *
+ * Message Queues
+ * --------------
+ *
+ * Game State
+ * ----------
+ *
+ * See the Intel article
+ * <a href="https://software.intel.com/en-us/articles/designing-the-framework-of-a-parallel-game-engine">
+ * Designing the Framework of a Parallel Game Engine</a>.
+ */
