@@ -3,7 +3,7 @@
 #include <cstdio>
 
 namespace tots {
-  Subsystem::Subsystem() : m_lastThread(NULL), m_hoggedThread(NULL) {
+  Subsystem::Subsystem() : m_lastThread(NULL) {
   }
 
   Subsystem::~Subsystem() {

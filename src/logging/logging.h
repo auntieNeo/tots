@@ -1,6 +1,8 @@
 #ifndef LOGGING_H_
 #define LOGGING_H_
 
+#include "../framework/subsystem.h"
+
 namespace tots {
   class Logging : public Subsystem {
     public:

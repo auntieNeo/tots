@@ -47,36 +47,16 @@ namespace tots {
      * Execute master command queue on each thread's GameState.
      */
 
+      // TODO: possibly introduce determinism by implementing subsystem priority and a thread gate
+
     while(1) {
       // run each idle subsystem thread
 
-      // resource run schedule:
-      // TODO: run the resource thread whenever resource events occur
-      // most threads besides graphics will idle until the resource thread is done
-      // m_threads.run(m_resource);
-
-      // game simulation run schedule:
-      // fixed to simulation tick once per frame
-      // TODO: run N collision threads and the behavior thread (blocking)
-//      m_threads.run(m_collision);
-//      m_threads.run(m_behavior);
-      // TODO: join behavior thread and run the physics thread
-//      if(m_threads.join(m_behavior))
-//        m_threads.run(m_physics);
-
-      // graphics run schedule:
-      // run graphics thread for every frame
       // FIXME: Need to actually wait for subsystems to be finished. This only hasn't crashed because drawing one triangle is fast. <_<
       for(size_t i = 0; i < m_numSubsystems; ++i) {
         m_threads->run(m_subsystems[i], SubsystemThread::UPDATE);  // FIXME: don't actually schedule subsystems like this
       }
 
-      // audio run schedule:
-      // TODO: run the audio thread whenever possible at least once per frame
-      //m_threads.run(m_audio);
-
-      // TODO: wait for any subsystem thread
-      // TODO: possibly introduce determinism by implementing subsystem priority and a thread gate
       while(false) {
         // TODO: append GameState message queue to m_queue
         // m_queue->append(thread->gameState()->popMessageQueue());

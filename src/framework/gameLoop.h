@@ -23,7 +23,7 @@ namespace tots {
 
     private:
       GameState *m_state;
-      AggregateQueue *m_queue;
+      AggregateQueue *m_queue;  // TODO: make this a template
 
       Subsystem **m_subsystems;
       size_t m_numSubsystems;

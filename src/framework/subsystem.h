@@ -7,7 +7,6 @@ namespace tots {
   class GameState;
   class EventQueue;
   class ThreadPool;
-  class HoggedThread;
   class SubsystemThread;
   class Subsystem {
     friend class SubsystemThread;
@@ -35,7 +34,6 @@ namespace tots {
     private:
       EventQueue *m_input, *m_output;
       SubsystemThread *m_lastThread;
-      HoggedThread *m_hoggedThread;
 
       void setLastThread(SubsystemThread *lastThread) { m_lastThread = lastThread; }
       SubsystemThread *lastThread() const { return m_lastThread; }
