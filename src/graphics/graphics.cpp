@@ -78,7 +78,7 @@ namespace tots {
     glShadeModel(GL_SMOOTH);
 
     // set the background color to black
-    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
     // enable depth testing
     glClearDepth(1.0f);

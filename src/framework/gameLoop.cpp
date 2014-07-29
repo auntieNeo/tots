@@ -43,10 +43,8 @@ namespace tots {
 
   void GameLoop::run() {
     /* TODO:
-     * Run the threads.
      * Combine CommandQueues into one master command queue.
      * Execute master command queue on each thread's GameState.
-     * Run the threads again.
      */
 
     while(1) {
