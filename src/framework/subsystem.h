@@ -36,6 +36,9 @@ namespace tots {
       EventQueue *m_input, *m_output;
       SubsystemThread *m_lastThread;
       HoggedThread *m_hoggedThread;
+
+      void setLastThread(SubsystemThread *lastThread) { m_lastThread = lastThread; }
+      SubsystemThread *lastThread() const { return m_lastThread; }
   };
 }
 

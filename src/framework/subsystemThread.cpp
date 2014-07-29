@@ -7,7 +7,7 @@
 #include <SDL_thread.h>
 
 namespace tots {
-  SubsystemThread::SubsystemThread(const GameState *gameState) {
+  SubsystemThread::SubsystemThread(const char *name, const GameState *gameState, SDL_sem *readySemaphore) : m_readySemaphore(readySemaphore) {
     m_currentSubsystem = NULL;
 
     // copy the game state from the given gameState
@@ -19,12 +19,12 @@ namespace tots {
 
     // create an SDL semaphore to control our thread
     m_runSemaphore = SDL_CreateSemaphore(0);
+
+    // create our SDL thread
+    m_sdlThread = SDL_CreateThread(m_run, name, this);
   }
 
   void SubsystemThread::init(const char *name) {
-    // create our SDL thread
-    // FIXME: this line needs to be executed after the object has been constructed... there must be a better way
-    m_sdlThread = SDL_CreateThread(getRunCallback(), name, this);
   }
 
   SubsystemThread::~SubsystemThread() {
@@ -37,5 +37,43 @@ namespace tots {
 
     // delete our game state
     delete m_gameState;
+  }
+
+  void SubsystemThread::run(Subsystem *subsystem, SubsystemThread::Command command) {
+    // assert that this thread is free and not running
+    assert(this->isFree());
+
+    // change the current subsystem
+    this->setCurrentSubsystem(subsystem);
+    m_command = command;
+
+    // set the last thread for this subsystem
+    subsystem->setLastThread(this);
+
+    // mark this thread as not free
+    this->setFree(false);
+
+    // signal the thread to start running
+    this->signalRun();
+  }
+
+  int SubsystemThread::m_run(void *voidSelf) {
+    SubsystemThread *self = static_cast<SubsystemThread *>(voidSelf);
+    while(!self->isDone()) {
+      // mark this thread as free
+      self->setFree(true);
+
+      // let main thread know we're available
+      self->signalReady();
+
+      // wait for run signal (when the main thread wants us to run)
+      self->waitRun();
+
+      // TODO: automatically update the game state
+
+      // run the subsystem
+      self->runCurrentSubsystem(self->m_command);
+    }
+    return 0;
   }
 }

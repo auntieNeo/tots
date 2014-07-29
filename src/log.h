@@ -3,6 +3,7 @@
 
 #include "graphics/opengl.h"
 
+// TODO: make log_critical_error() function
 void log_info(const char *msg);
 void log_error(const char *msg, ...);
 void log_SDL_error(const char *msg);

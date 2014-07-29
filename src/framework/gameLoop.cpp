@@ -5,12 +5,12 @@
 #include "threadPool.h"
 #include "subsystem.h"
 
-#define NUM_THREADS 4
+#define NUM_THREADS 1
 
 namespace tots {
   GameLoop::GameLoop(Subsystem **subsystems, size_t numSubsystems) {
-    // create the master GameState object
-    m_state = new GameState();  // FIXME: we might not even need this...
+    // create an empty game state to share among the threads
+    m_state = new GameState();  // FIXME: we might not even need to keep this around...
 
     // create the master message queue
     m_queue = new AggregateQueue();
@@ -18,7 +18,7 @@ namespace tots {
     // TODO: populate the game state
 
     // create a pool of threads
-    m_threads = new ThreadPool(1);
+    m_threads = new ThreadPool(NUM_THREADS, m_state);
 
     // copy the subsystem pointers
     m_numSubsystems = numSubsystems;

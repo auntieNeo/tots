@@ -13,11 +13,11 @@ namespace tots {
     public:
       enum Command { INIT = 1, UPDATE, CLOSE };
 
-      SubsystemThread(const GameState *gameState);
+      SubsystemThread(const char *name, const GameState *gameState, SDL_sem *readySemaphore);
       virtual ~SubsystemThread();
       void init(const char *name);
 
-      virtual void run(Subsystem *subsystem, SubsystemThread::Command command) = 0;
+      void run(Subsystem *subsystem, SubsystemThread::Command command);
 
       bool isFree() { return SDL_AtomicGet(&m_free); }
 
@@ -53,12 +53,13 @@ namespace tots {
     private:
       GameState *m_gameState;
       Subsystem *m_currentSubsystem;
+      SubsystemThread::Command m_command;
 
       SDL_Thread *m_sdlThread;
-      SDL_sem *m_runSemaphore;
+      SDL_sem *m_runSemaphore, *m_readySemaphore;
       SDL_atomic_t m_free, m_done;
 
-      virtual SDL_ThreadFunction getRunCallback() const = 0;
+      void signalReady() { SDL_SemPost(m_readySemaphore); };
 
       static int m_run(void *self);
   };

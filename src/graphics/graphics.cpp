@@ -88,10 +88,10 @@ namespace tots {
     // directory containing all vertex (.vert), fragment (.frag), etc. shaders
     // TODO: move this into a routine
     size_t numVertShaderPaths, numFragShaderPaths;
-    char **vertShaderPaths = m_findShaders("./src/shaders", "vert", &numVertShaderPaths);
+    char **vertShaderPaths = m_findShaders("./src/shaders", ".vert", &numVertShaderPaths);
     for(size_t i = 0; i < numVertShaderPaths; ++i)
       printf("found vert shader: %s\n", vertShaderPaths[i]);
-    char **fragShaderPaths = m_findShaders("./src/shaders", "frag", &numFragShaderPaths);
+    char **fragShaderPaths = m_findShaders("./src/shaders", ".frag", &numFragShaderPaths);
     for(size_t i = 0; i < numFragShaderPaths; ++i)
       printf("found frag shader: %s\n", fragShaderPaths[i]);
 
@@ -149,9 +149,11 @@ namespace tots {
       exit(1);  // FIXME: abort properly
 
     for(size_t i = 0; i < numFragShaderPaths; ++i)
-      free(fragShaderPaths[i]);  // allocated via malloc(3) as per scandir(3) man page
+      delete[] fragShaderPaths[i];
+    delete[] fragShaderPaths;
     for(size_t i = 0; i < numVertShaderPaths; ++i)
-      free(vertShaderPaths[i]);  // allocated via malloc(3) as per scandir(3) man page
+      delete[] vertShaderPaths[i];
+    delete[] vertShaderPaths;
 
     // TODO: spawn this properly
     GraphicsTriangle *triangle = new GraphicsTriangle();
@@ -180,19 +182,29 @@ namespace tots {
     component->init(this);
   }
 
+
+#define MAX_SHADERS 256
   char **Graphics::m_findShaders(const char *dirp, const char *ext, size_t *numShaders) {
     *numShaders = 0;
+    char **result = new char*[MAX_SHADERS];
     if(!fs::exists(dirp) || !fs::is_directory(dirp)) {
       log_error("Could not open shader directory: %s", dirp);
+      // FIXME: abort properly here
     }
     for(fs::directory_iterator i(dirp); i != fs::directory_iterator(); ++i) {
       if(strcmp(i->path().extension().string().c_str(), ext) == 0) {
-        *numShaders += 1;
+        if(*numShaders >= MAX_SHADERS) {
+          log_error("Tried to load too many shaders in: %s", dirp);
+          // FIXME: abort properly here
+        }
+        printf("found: %s\n", i->path().c_str());
+        size_t shaderIndex = (*numShaders)++;
+        size_t pathLength = strlen(i->path().c_str()) + 1;
+        result[shaderIndex] = new char[pathLength];
+        strncpy(result[shaderIndex], i->path().c_str(), pathLength);
       }
-      printf("found: %s\n", i->path().c_str());
     }
-    char **result = static_cast<char **>(malloc(sizeof(char *) * (*numShaders)));  // FIXME: check this malloc
-    return result;  // FIXME: actually fill this
+    return result;
   }
 
   GLuint Graphics::m_loadShader(const char *sourcePath, GLenum shaderType) {
