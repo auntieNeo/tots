@@ -3,5 +3,6 @@
 
 #include <cassert>
 #include <cstddef>
+#include <cstdint>
 
 #endif

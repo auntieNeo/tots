@@ -13,7 +13,9 @@ namespace tots {
     friend class WorkerThread;
     friend class ThreadPool;
     public:
+      enum Command { INIT = 1, UPDATE, CLOSE };
       enum Hints { NONE = 0, HOG_THREAD = 2 };
+      enum Priority { HIGHEST_PRIORITY = 0, HIGH_PRIORITY = 8, NORMAL_PRIORITY = 16, LOW_PRIORITY = 24, LOWEST_PRIORITY = 32, SUBSYSTEM_PRIORITY = 42 };
 
       Subsystem();
       virtual ~Subsystem();

@@ -18,7 +18,7 @@ namespace tots {
       ~ThreadPool();
 
       void registerSubsystems(Subsystem **subsystems, size_t numSubsystems);
-      void run(Subsystem *subsystem, SubsystemThread::Command command);
+      void run(Subsystem *subsystem, Subsystem::Command command);
       void flush();
 
     protected:

@@ -6,6 +6,9 @@ namespace tots {
     public:
       GameState();
       ~GameState();
+
+    private:
+//      MessageQueue *m_messages;
   };
 }
 

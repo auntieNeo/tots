@@ -39,7 +39,7 @@ namespace tots {
     delete m_gameState;
   }
 
-  void SubsystemThread::run(Subsystem *subsystem, SubsystemThread::Command command) {
+  void SubsystemThread::run(Subsystem *subsystem, Subsystem::Command command) {
     // assert that this thread is free and not running
     assert(this->isFree());
 

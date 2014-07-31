@@ -11,13 +11,11 @@ namespace tots {
   class SubsystemThread {
     friend class ThreadPool;
     public:
-      enum Command { INIT = 1, UPDATE, CLOSE };
-
       SubsystemThread(const char *name, const GameState *gameState, SDL_sem *readySemaphore);
       virtual ~SubsystemThread();
       void init(const char *name);
 
-      void run(Subsystem *subsystem, SubsystemThread::Command command);
+      void run(Subsystem *subsystem, Subsystem::Command command);
 
       bool isFree() { return SDL_AtomicGet(&m_free); }
 
@@ -34,15 +32,15 @@ namespace tots {
       void signalRun() { assert(SDL_SemValue(m_runSemaphore) == 0);
                          SDL_SemPost(m_runSemaphore); }
 
-      void runCurrentSubsystem(Command command) {
+      void runCurrentSubsystem(Subsystem::Command command) {
         switch(command) {
-          case INIT:
+          case Subsystem::INIT:
             m_currentSubsystem->init(m_gameState);
             break;
-          case UPDATE:
+          case Subsystem::UPDATE:
             m_currentSubsystem->update(m_gameState);
             break;
-          case CLOSE:
+          case Subsystem::CLOSE:
             m_currentSubsystem->close(m_gameState);
             break;
           default:
@@ -53,7 +51,7 @@ namespace tots {
     private:
       GameState *m_gameState;
       Subsystem *m_currentSubsystem;
-      SubsystemThread::Command m_command;
+      Subsystem::Command m_command;
 
       SDL_Thread *m_sdlThread;
       SDL_sem *m_runSemaphore, *m_readySemaphore;

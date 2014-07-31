@@ -11,7 +11,7 @@ if(WIN32)
   set(CMAKE_CXX_FLAGS "/EHsc")
   add_definitions(-DWIN32)
 else(WIN32)
-  set(CMAKE_CXX_FLAGS "-g -Wall")
+  set(CMAKE_CXX_FLAGS "-g -Wall -std=c++11")
   add_definitions(-DLINUX)
 endif(WIN32)
 
