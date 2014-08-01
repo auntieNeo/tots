@@ -5,29 +5,22 @@
 
 #define NUM_THREADS 1
 
-namespace tots {
+namespace tots::framework {
   /**
-   * The GameLoop class represents the outermost loop of the Tots engine. The
-   * GameLoop's primary task is to dispatch the various subsystems on one or
-   * more threads.
+   * The GameLoop constructor takes a list of Subsystem objects pointed to in
+   * \a subsystems. These Subsystem objects will be used for the duration of the
+   * GameLoop object. Subsystems cannot be added on the fly; they must be added
+   * at the GameLoop object's construction.
    *
-   * Games that use the Tots engine must construct a GameLoop object with a
-   * list of Subsystem objects that will be used for the duration of the
-   * GameLoop. The game can set different parameters on the GameLoop to affect
-   * its behavior, such as the framerate, the number of frames to skip, and the
-   * period of the game clock.
+   * \a numSubsystems specifies the size of the \a subsystems array.
    *
-   * Additionally, through the Subsystem class interface, each Subsystem object
-   * advertises the period on which it must be scheduled for updates, as well as
-   * hint flags that affect the GameLoop's behavior. Descriptions of these
-   * attributes and flags are described in the Subsystem class' API.
+   * This constructor does a number of things, such as allocating datastructures
+   * to facilitate thread scheduling and communication, as well as allocating
+   * a pool of threads to be used for the duration of the loop.
    *
-   * The operation of the GameLoop is subtle and complicated. See these
-   * resources:
-   *
-   * <a href="http://gameprogrammingpatterns.com/game-loop.html">Game Loop - Game Programming Patterns</a>
-   *
-   * <a href="http://gafferongames.com/game-physics/fix-your-timestep/">Fix Your Timestep! - gafferongames.com</a>
+   * Each subsystem is registered with the GameLoop, which is how the GameLoop
+   * takes into account all of the Subsystem parameters and hints that need to
+   * be known while the GameLoop is running.
    */
   GameLoop::GameLoop(Subsystem **subsystems, size_t numSubsystems) {
     // create an empty game state to share among the threads
@@ -52,10 +45,9 @@ namespace tots {
     // register each subsystem
     m_threads->registerSubsystems(m_subsystems, m_numSubsystems);
 
-    // initialize each subsystem
+    // schedule initialization for each subsystem
     for(size_t i = 0; i < m_numSubsystems; ++i) {
       m_scheduleTask(m_subsystems[i], Subsystem::INIT, 0, Subsystem::HIGHEST_PRIORITY);
-      m_threads->run(m_subsystems[i], Subsystem::INIT);
     }
   }
 
@@ -72,6 +64,9 @@ namespace tots {
      * Combine message queues into one master message queue.
      * Execute master command queue on each thread's GameState.
      */
+
+    // FIXME: must run all of the INIT commands here before the loop is entered
+//    m_threads->run(m_subsystems[i], Subsystem::INIT);
 
       // TODO: possibly introduce determinism by implementing subsystem priority and a thread gate
 

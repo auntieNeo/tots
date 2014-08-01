@@ -5,13 +5,7 @@
 #include "../utility/priorityQueue.h"
 #include "subsystem.h"
 
-/**
- * GameLoop implements a non-locking game loop that shares data between
- * subsystem threads using an aggregate command queue and multiple copies of
- * the GameState object.
- */
-
-namespace tots {
+namespace tots::framework {
   class GameState;
   class AggregateQueue;
   class ThreadPool;
@@ -20,6 +14,10 @@ namespace tots {
    * The GameLoop class represents the outermost loop of the Tots engine. The
    * GameLoop's primary task is to dispatch the various subsystems on one or
    * more threads.
+   *
+   * GameLoop implements a non-locking game loop that shares data between
+   * subsystem threads using an aggregate command queue and multiple copies of
+   * the GameState object.
    *
    * Games that use the Tots engine must construct a GameLoop object with a
    * list of Subsystem objects that will be used for the duration of the
