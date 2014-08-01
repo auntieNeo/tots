@@ -6,6 +6,29 @@
 #define NUM_THREADS 1
 
 namespace tots {
+  /**
+   * The GameLoop class represents the outermost loop of the Tots engine. The
+   * GameLoop's primary task is to dispatch the various subsystems on one or
+   * more threads.
+   *
+   * Games that use the Tots engine must construct a GameLoop object with a
+   * list of Subsystem objects that will be used for the duration of the
+   * GameLoop. The game can set different parameters on the GameLoop to affect
+   * its behavior, such as the framerate, the number of frames to skip, and the
+   * period of the game clock.
+   *
+   * Additionally, through the Subsystem class interface, each Subsystem object
+   * advertises the period on which it must be scheduled for updates, as well as
+   * hint flags that affect the GameLoop's behavior. Descriptions of these
+   * attributes and flags are described in the Subsystem class' API.
+   *
+   * The operation of the GameLoop is subtle and complicated. See these
+   * resources:
+   *
+   * <a href="http://gameprogrammingpatterns.com/game-loop.html">Game Loop - Game Programming Patterns</a>
+   *
+   * <a href="http://gafferongames.com/game-physics/fix-your-timestep/">Fix Your Timestep! - gafferongames.com</a>
+   */
   GameLoop::GameLoop(Subsystem **subsystems, size_t numSubsystems) {
     // create an empty game state to share among the threads
     m_state = new GameState();  // FIXME: we might not even need to keep this around...
@@ -46,14 +69,20 @@ namespace tots {
 
   void GameLoop::run() {
     /* TODO:
-     * Combine CommandQueues into one master command queue.
+     * Combine message queues into one master message queue.
      * Execute master command queue on each thread's GameState.
      */
 
       // TODO: possibly introduce determinism by implementing subsystem priority and a thread gate
 
     while(1) {
-      // run each idle subsystem thread
+      // if any tasks in the overdue queue
+        // try to run overdue tasks
+
+      // take a task from the task queue
+      // check if the task can be run (i.e. threads are available)
+
+      // if the task can't be scheduled now, add it to an overdue queue
 
       // FIXME: Need to actually wait for subsystems to be finished. This only hasn't crashed because drawing one triangle is fast. <_<
       for(size_t i = 0; i < m_numSubsystems; ++i) {
@@ -78,10 +107,16 @@ namespace tots {
     }
   }
 
-  void GameLoop::m_scheduleTask(Subsystem *subsystem, Subsystem::Command command, uint32_t gameTime, Subsystem::Priority priority) {
+  /**
+   * The m_scheduleTask routine schedules \a task (which is a Subsystem pointer
+   * and a command) to be run in a thread at the given time \a gameTime with the
+   * priority \a priority.
+   * \var Task task the var
+   */
+  void GameLoop::m_scheduleTask(Task task, uint32_t gameTime, Subsystem::Priority priority) {
     assert(sizeof(Subsystem::Priority) == 4);
 
     uint64_t key = (static_cast<uint64_t>(gameTime) << 32) | static_cast<uint64_t>(priority);
-    m_taskQueue->insert(key, Task(subsystem, command));
+    m_taskQueue->insert(key, task);
   }
 }

@@ -8,6 +8,20 @@
 
 namespace tots {
   class GameState;
+
+  /**
+   * The SubsystemThread class encapsulates an SDL thread that runs a Subsystem
+   * object.
+   *
+   * The SubsystemThread is also responsible for executing the upkeep for the
+   * GameState object. Every time before a new subsystem is executed, the
+   * GameState object is updated from events in the message queue that modify
+   * the game state. By maintaining a seperate GameState object inside each
+   * SubsystemThread object, the Tots engine avoids a large amount of thread
+   * synchronization. Because the otherwise serial synchronization step of
+   * updating the GameState is run in every thread, its cost is effectively
+   * reduced to the cost of running it once.
+   */
   class SubsystemThread {
     friend class ThreadPool;
     public:

@@ -3,6 +3,13 @@
 #include <cstdio>
 
 namespace tots {
+  /**
+   * The Subsystem class embodies a system in the Tots engine. Subsystems can
+   * be run in multiple threads, and they must communicate using Message
+   * queues. This design serves to decouple different systems in the Tots
+   * engine, and also facilitates message passing among subsystem threads
+   * without excessive thread locking.
+   */
   Subsystem::Subsystem() : m_lastThread(NULL) {
   }
 
