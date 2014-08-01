@@ -8,6 +8,18 @@ namespace tots {
   class EventQueue;
   class ThreadPool;
   class SubsystemThread;
+
+  /**
+   * The Subsystem class embodies a system in the Tots engine. Derived classes
+   * can be used to extend the functionality of the Tots engine. Instantiated
+   * Subsystem objects are passed to the GameLoop class when starting the
+   * engine to use them.
+   *
+   * Subsystems can be run in multiple threads, and they must communicate using
+   * Message queues. This design serves to decouple different systems in the
+   * Tots engine, and also facilitates message passing among subsystem threads
+   * without excessive thread locking.
+   */
   class Subsystem {
     friend class SubsystemThread;
     friend class WorkerThread;
@@ -28,7 +40,21 @@ namespace tots {
       virtual const char *name() const = 0;
 
     protected:
+      /**
+       * Derived classes must implement the m_init() method. m_init() is called
+       * early from the GameLoop object to allow Subsystem objects to initialize
+       * their resources in a thread.
+       *
+       * If some resource must be initialized from a thread other than the main
+       * thread, or if a subsystem's performance would benefit from doing so,
+       * those resources should be initialized inside m_init(). Resources that
+       * would be better initialized from the main thread can be initialized in
+       * the derived subsystem's constructor.
+       *
+       * \sa init()
+       */
       virtual void m_init(const GameState *state) = 0;
+
       virtual void m_update(const GameState *state) = 0;
       virtual void m_close(const GameState *state) = 0;
       size_t m_dt;

@@ -4,18 +4,34 @@
 
 namespace tots {
   /**
-   * The Subsystem class embodies a system in the Tots engine. Subsystems can
-   * be run in multiple threads, and they must communicate using Message
-   * queues. This design serves to decouple different systems in the Tots
-   * engine, and also facilitates message passing among subsystem threads
-   * without excessive thread locking.
+   * This constructs a Subsystem object.
+   *
+   * The Subsystem constructor is typically called from the main thread. Derived
+   * classes should also assume that their constructors will also be called from
+   * the main thread.
    */
   Subsystem::Subsystem() : m_lastThread(NULL) {
   }
 
+  /**
+   * This destroys a Subsystem object.
+   *
+   * Most of the real cleanup might actually happen in close() and m_close().
+   */
   Subsystem::~Subsystem() {
   }
 
+  /**
+   * The init() method is called early from the GameLoop to initialize this
+   * Subsystem object in a thread. The init() method does some Subsystem upkeep
+   * and then immediately calls m_init() on itself.
+   *
+   * Derived Subsystem classes that wish to initialize themselves in a thread
+   * (as opposed to in their constructor, which is likely run in the main
+   * thread) must implement m_init().
+   *
+   * \sa m_init()
+   */
   void Subsystem::init(const GameState *state) {
     // TODO: initialize something I guess
     m_init(state);
@@ -26,6 +42,21 @@ namespace tots {
     m_update(state);
   }
 
+  /**
+   * The close() method is counterpart to the init() method. close() is called
+   * late in the GameLoop object's lifetime and is intended to clean us anything
+   * that was initialized in init() or any other time during the Subsystem
+   * object's lifetime. close() does some general Subsystem clean up and then
+   * immediately calles m_close() on itself.
+   *
+   * Derived Subsystem classes must implement m_close() to clean themselves up.
+   *
+   * close() is run in a subsystem thread, as opposed to the destructor, which
+   * is run in the main thread. Subsystems should try to clean up most of their
+   * resources in m_close() rather than in the destructor.
+   *
+   * \sa m_close()
+   */
   void Subsystem::close(const GameState *state) {
     // TODO: close stuff I guess
     m_close(state);

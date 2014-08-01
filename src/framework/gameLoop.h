@@ -15,6 +15,30 @@ namespace tots {
   class GameState;
   class AggregateQueue;
   class ThreadPool;
+
+  /**
+   * The GameLoop class represents the outermost loop of the Tots engine. The
+   * GameLoop's primary task is to dispatch the various subsystems on one or
+   * more threads.
+   *
+   * Games that use the Tots engine must construct a GameLoop object with a
+   * list of Subsystem objects that will be used for the duration of the
+   * GameLoop. The game can set different parameters on the GameLoop to affect
+   * its behavior, such as the framerate, the number of frames to skip, and the
+   * period of the game clock.
+   *
+   * Additionally, through the Subsystem class interface, each Subsystem object
+   * advertises the period on which it must be scheduled for updates, as well as
+   * hint flags that affect the GameLoop's behavior. Descriptions of these
+   * attributes and flags are described in the Subsystem class' API.
+   *
+   * The operation of the GameLoop is subtle and complicated. See these
+   * resources:
+   *
+   * <a href="http://gameprogrammingpatterns.com/game-loop.html">Game Loop - Game Programming Patterns</a>
+   *
+   * <a href="http://gafferongames.com/game-physics/fix-your-timestep/">Fix Your Timestep! - gafferongames.com</a>
+   */
   class GameLoop {
     public:
       GameLoop(Subsystem **subsystems, size_t numSubsystems);
