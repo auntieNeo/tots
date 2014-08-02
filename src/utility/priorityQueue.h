@@ -113,7 +113,7 @@ namespace tots {
   template<typename K, typename T>
   void MinPriorityQueue<K, T>::m_floatMinHeapify(size_t i) {
     size_t parent = (i + 1) / 2 - 1;
-    while(m_heap[i].m_key < m_heap[parent].m_key) {
+    while(i > 0 && m_heap[i].m_key < m_heap[parent].m_key) {
       KeyValuePair temp = m_heap[parent];
       m_heap[parent] = m_heap[i];
       m_heap[i] = temp;
@@ -124,13 +124,15 @@ namespace tots {
 
   template<typename K, typename T>
   void MinPriorityQueue<K, T>::m_growHeap() {
-    assert(m_heapSize > 0);
-    size_t newHeapSize = m_heapSize * 2;
-    KeyValuePair *newHeap = static_cast<KeyValuePair *>(malloc(newHeapSize * sizeof(KeyValuePair)));
-    memcpy(newHeap, m_heap, m_heapSize);
+    if(m_heapAllocated == 0)
+      m_heapAllocated = 16;  // arbitrary number
+    assert(m_heapSize <= m_heapAllocated);
+    size_t newHeapAllocated = m_heapAllocated * 2;
+    KeyValuePair *newHeap = static_cast<KeyValuePair *>(malloc(newHeapAllocated * sizeof(KeyValuePair)));
+    memcpy(newHeap, m_heap, m_heapSize * sizeof(KeyValuePair));
     free(m_heap);
     m_heap = newHeap;
-    m_heapSize = newHeapSize;
+    m_heapAllocated = newHeapAllocated;
   }
 }
 
