@@ -4,9 +4,11 @@
 *.o
 CMakeCache.txt
 CMakeFiles
+CTestTestfile.cmake
+/Testing
 Makefile
 cmake_install.cmake
-src/tots
+/src/tots
 documentation/html
 documentation/latex
 *.vcxproj

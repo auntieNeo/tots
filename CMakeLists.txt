@@ -3,9 +3,9 @@ project (Typing_of_the_Stars)
 set (Typing_of_the_Stars_VERSION_MAJOR 0)
 set (Typing_of_the_Stars_VERSION_MINOR 2)
 
-set (CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+enable_testing()
 
-set (TOTS_SOURCE_DIR src)
+set (CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 if(WIN32)
   set(CMAKE_CXX_FLAGS "/EHsc")
@@ -113,4 +113,4 @@ include_directories(SYSTEM ${Boost_INCLUDE_DIRS} ${GLEW_INCLUDE_DIR} ${OPENGL_IN
 
 add_custom_target(doxygen doxygen)
 
-add_subdirectory("${TOTS_SOURCE_DIR}")
+add_subdirectory("./src")
