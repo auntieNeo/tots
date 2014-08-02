@@ -9,6 +9,8 @@ namespace tots {
   class GameState;
   class AggregateQueue;
   class ThreadPool;
+  class Task;
+  class TaskQueue;
 
   /**
    * The GameLoop class represents the outermost loop of the Tots engine. The
@@ -45,22 +47,8 @@ namespace tots {
       void run();
 
     private:
-      class Task {
-        public:
-          Task(Subsystem *subsystem, Subsystem::Command command) : m_subsystem(subsystem), m_command(command) {}
-          ~Task() {}
-
-          Subsystem *subsystem() { return m_subsystem; }
-          Subsystem::Command command() { return m_command; }
-
-        private:
-          Subsystem *m_subsystem;
-          Subsystem::Command m_command;
-      };
-
       GameState *m_state;
 //      AggregateQueue<Message> *m_messageQueue;
-      typedef MinPriorityQueue< uint64_t, Task > TaskQueue;
       TaskQueue *m_taskQueue, *m_overdueTaskQueue;
 
       Subsystem **m_subsystems;
@@ -68,7 +56,10 @@ namespace tots {
 
       ThreadPool *m_threads;
 
-      void m_scheduleTask(const Task &task, uint32_t gameTime, Subsystem::Priority priority = Subsystem::Priority::SUBSYSTEM);
+      size_t m_gameTime;
+
+      void m_scheduleTask(const Task &task, uint32_t gameTime, Subsystem::Priority priority, TaskQueue *queue);
+      void m_scheduleTask(const Task &task, uint32_t gameTime, Subsystem::Priority priority) { m_scheduleTask(task, gameTime, priority, m_taskQueue); }
       bool m_tryRunTask(Task &task);
   };
 }

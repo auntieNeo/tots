@@ -4,6 +4,8 @@
 #include <cstdlib>
 #include <cstring>
 
+#include "../common.h"
+
 namespace tots {
   template<typename K, typename T>
   class MinPriorityQueue {
@@ -13,6 +15,9 @@ namespace tots {
 
       void insert(const K &key, const T &value);
       T next() const;
+      K nextKey() const;
+      T peekNext() const { return next(); }
+      K peekNextKey() const { return nextKey(); }
       T popNext();
       bool hasNext() const { return m_heapSize > 0; }
 
@@ -61,6 +66,12 @@ namespace tots {
   }
 
   template<typename K, typename T>
+  K MinPriorityQueue<K, T>::nextKey() const {
+    assert(m_heapSize >= 1);
+    return m_heap[0].m_key;
+  }
+
+  template<typename K, typename T>
   T MinPriorityQueue<K, T>::popNext() {
     assert(m_heapSize >= 1);
 
@@ -83,11 +94,11 @@ namespace tots {
     {
       size_t left = (i + 1) * 2 - 1;
       size_t right = (i + 1) * 2;
-      if((left < m_heapSize) && (m_heap[left] < m_heap[i]))
+      if((left < m_heapSize) && (m_heap[left].m_key < m_heap[i].m_key))
         smallest = left;
       else
         smallest = i;
-      if((right < m_heapSize) && (m_heap[right] < m_heap[smallest]))
+      if((right < m_heapSize) && (m_heap[right].m_key < m_heap[smallest].m_key))
         smallest = right;
       if(smallest != i) {
         KeyValuePair temp = m_heap[i];

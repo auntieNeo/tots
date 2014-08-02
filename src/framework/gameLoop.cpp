@@ -1,6 +1,7 @@
 #include "gameLoop.h"
 
 #include "gameState.h"
+#include "taskQueue.h"
 #include "threadPool.h"
 
 #define NUM_THREADS 1
@@ -22,7 +23,7 @@ namespace tots {
    * takes into account all of the Subsystem parameters and hints that need to
    * be known while the GameLoop is running.
    */
-  GameLoop::GameLoop(Subsystem **subsystems, size_t numSubsystems) {
+  GameLoop::GameLoop(Subsystem **subsystems, size_t numSubsystems) : m_gameTime(0) {
     // create an empty game state to share among the threads
     m_state = new GameState();  // FIXME: we might not even need to keep this around...
 
@@ -31,6 +32,7 @@ namespace tots {
 
     // create the task queue which schedules subsystems to run
     m_taskQueue = new TaskQueue(numSubsystems * 4);
+    m_overdueTaskQueue = new TaskQueue(numSubsystems * 4);
 
     // TODO: populate the game state
 
@@ -64,6 +66,7 @@ namespace tots {
 
   GameLoop::~GameLoop() {
     delete m_threads;
+    delete m_overdueTaskQueue;
     delete m_taskQueue;
 //    delete m_messageQueue;
     delete m_state;
@@ -76,15 +79,35 @@ namespace tots {
      * Execute master command queue on each thread's GameState.
      */
 
-      // TODO: possibly introduce determinism by implementing subsystem priority and a thread gate
+    // TODO: possibly introduce determinism by implementing subsystem priority and a thread gate
+
+    m_gameTime = 0;
 
     while(1) {
       // for every task in the overdue queue
-      while(m_overdueTaskQueue->hasNext()) {
-        // try to run overdue tasks
-      }
+//      while(m_overdueTaskQueue->hasNext()) {
+        // TODO: try to run overdue tasks
+//      }
 
-      // take a task from the task queue
+      while(m_taskQueue->hasNext()) {
+        // check if the task is due
+        uint32_t nextTaskTime = m_taskQueue->peekNextKey().m_data.m_time;
+        Subsystem::Priority nextTaskPriority = m_taskQueue->peekNextKey().m_data.m_priority;
+        if(nextTaskTime >= m_gameTime) {
+          // take the task from the task queue
+          Task nextTask = m_taskQueue->popNext();
+          // try to run the task
+          if(m_tryRunTask(nextTask)) {
+            // TODO: schedule the next task based on the subsystem's update period
+          }
+          else {
+            // add the task to the overdue task queue if we could not run it
+            // (i.e. no suitable threads were available)
+            m_scheduleTask(nextTask, nextTaskTime, nextTaskPriority, m_overdueTaskQueue);
+          }
+        }
+
+      }
       // check if the task can be run (i.e. threads are available)
 
       // if the task can't be scheduled now, add it to an overdue queue
@@ -112,17 +135,13 @@ namespace tots {
     }
   }
 
-  /**
-   * The m_scheduleTask routine schedules \a task (which is a Subsystem pointer
-   * and a command) to be run in a thread at the given time \a gameTime with the
-   * priority \a priority.
-   * \var Task task the var
-   */
-  void GameLoop::m_scheduleTask(const Task &task, uint32_t gameTime, Subsystem::Priority priority) {
+  void GameLoop::m_scheduleTask(const Task &task, uint32_t gameTime, Subsystem::Priority priority, TaskQueue *queue) {
     assert(sizeof(Subsystem::Priority) == 4);
 
-    uint64_t key = (static_cast<uint64_t>(gameTime) << 32) | static_cast<uint64_t>(priority);
-    m_taskQueue->insert(key, task);
+    TaskQueueKey key;
+    key.m_data.m_time = gameTime;
+    key.m_data.m_priority = priority;
+    queue->insert(key, task);
   }
 
   /**
