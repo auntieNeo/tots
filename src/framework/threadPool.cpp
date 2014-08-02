@@ -33,9 +33,6 @@ namespace tots {
     delete[] m_threads;
   }
 
-  void ThreadPool::registerSubsystems(Subsystem **subsystems, size_t numSubsystems) {
-  }
-
   void ThreadPool::run(Subsystem *subsystem, Subsystem::Command command) {
     // FIXME: These need to be queued. This method should never, ever block.
     // wait for a free thread

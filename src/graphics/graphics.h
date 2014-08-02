@@ -15,7 +15,7 @@ namespace tots {
       ~Graphics();
 
       void addComponent(GraphicsComponent *component);
-      Subsystem::Hints hints() const { return Subsystem::HOG_THREAD; }
+      Subsystem::Hints hints() const { return Subsystem::Hints::HOG_THREAD; }
 
       const char *name() const { return "Graphics Subsystem"; }
 

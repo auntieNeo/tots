@@ -5,7 +5,7 @@
 
 #define NUM_THREADS 1
 
-namespace tots::framework {
+namespace tots {
   /**
    * The GameLoop constructor takes a list of Subsystem objects pointed to in
    * \a subsystems. These Subsystem objects will be used for the duration of the
@@ -42,12 +42,23 @@ namespace tots::framework {
     m_subsystems = new Subsystem*[numSubsystems];
     memcpy(m_subsystems, subsystems, sizeof(Subsystem *) * numSubsystems);
 
-    // register each subsystem
-    m_threads->registerSubsystems(m_subsystems, m_numSubsystems);
-
-    // schedule initialization for each subsystem
+    // loop through each subsystem
     for(size_t i = 0; i < m_numSubsystems; ++i) {
-      m_scheduleTask(m_subsystems[i], Subsystem::INIT, 0, Subsystem::HIGHEST_PRIORITY);
+      if((m_subsystems[i]->hints() & Subsystem::Hints::HOG_THREAD) != Subsystem::Hints::NONE) {
+        /*
+         * Allocate a threadReady semaphore here. Normally ThreadPool would be
+         * responsible for providing the semaphore, but now we need to provide
+         * it. The Subsystem class takes ownership of both the readySemaphore
+         * and the hogged thread, and it knows to de-allocate them in its
+         * destructor.
+         */
+        SDL_sem *readySemaphore = SDL_CreateSemaphore(0);
+        // create a hogged thread for each subsystem that needs one
+        m_subsystems[i]->m_hoggedThread = new SubsystemThread(
+            m_subsystems[i]->name(), m_state, readySemaphore);
+      }
+      // schedule each subsystem for initialization
+      m_scheduleTask(Task(m_subsystems[i], Subsystem::Command::INIT), 0, Subsystem::Priority::HIGHEST);
     }
   }
 
@@ -65,14 +76,13 @@ namespace tots::framework {
      * Execute master command queue on each thread's GameState.
      */
 
-    // FIXME: must run all of the INIT commands here before the loop is entered
-//    m_threads->run(m_subsystems[i], Subsystem::INIT);
-
       // TODO: possibly introduce determinism by implementing subsystem priority and a thread gate
 
     while(1) {
-      // if any tasks in the overdue queue
+      // for every task in the overdue queue
+      while(m_overdueTaskQueue->hasNext()) {
         // try to run overdue tasks
+      }
 
       // take a task from the task queue
       // check if the task can be run (i.e. threads are available)
@@ -81,7 +91,7 @@ namespace tots::framework {
 
       // FIXME: Need to actually wait for subsystems to be finished. This only hasn't crashed because drawing one triangle is fast. <_<
       for(size_t i = 0; i < m_numSubsystems; ++i) {
-        m_threads->run(m_subsystems[i], Subsystem::UPDATE);  // FIXME: don't actually schedule subsystems like this
+        m_threads->run(m_subsystems[i], Subsystem::Command::UPDATE);  // FIXME: don't actually schedule subsystems like this
       }
 
       while(false) {
@@ -98,7 +108,7 @@ namespace tots::framework {
 
     // close all of the subsystems
     for(size_t i = 0; i < m_numSubsystems; ++i) {
-      m_threads->run(m_subsystems[i], Subsystem::CLOSE);
+      m_threads->run(m_subsystems[i], Subsystem::Command::CLOSE);
     }
   }
 
@@ -108,10 +118,35 @@ namespace tots::framework {
    * priority \a priority.
    * \var Task task the var
    */
-  void GameLoop::m_scheduleTask(Task task, uint32_t gameTime, Subsystem::Priority priority) {
+  void GameLoop::m_scheduleTask(const Task &task, uint32_t gameTime, Subsystem::Priority priority) {
     assert(sizeof(Subsystem::Priority) == 4);
 
     uint64_t key = (static_cast<uint64_t>(gameTime) << 32) | static_cast<uint64_t>(priority);
     m_taskQueue->insert(key, task);
+  }
+
+  /**
+   * The m_tryRunTask method attempts to run the given subsystem task. If the
+   * task cannot be run at the moment (i.e. there are no suitable threads
+   * available) then this method returns false. Otherwise, the task is started
+   * on a thread and this method returns true.
+   *
+   * The m_tryRunTask method never blocks. This is vital as it allows the game
+   * loop to continue to check if it might be possible to run other tasks with
+   * the threads currently available.
+   */
+  bool GameLoop::m_tryRunTask(Task &task) {
+    if((task.subsystem()->hints() & Subsystem::Hints::HOG_THREAD) != Subsystem::Hints::NONE) {
+      // check if the subsystem's hogged thread is in use
+      assert(task.subsystem()->m_hoggedThread != NULL);
+      if(task.subsystem()->m_hoggedThread->isFree()) {
+        // run the task on the subsystem's hogged thread
+        return task.subsystem()->m_hoggedThread->tryRun(task.subsystem(), task.command());
+      }
+    }
+    else {
+      // TODO: try to run the task using the thread pool
+    }
+    return false;
   }
 }

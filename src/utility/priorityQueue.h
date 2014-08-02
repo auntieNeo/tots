@@ -14,6 +14,9 @@ namespace tots {
       void insert(const K &key, const T &value);
       T next() const;
       T popNext();
+      bool hasNext() const { return m_heapSize > 0; }
+
+      size_t size() const { return m_heapSize; };
 
     private:
       struct KeyValuePair {

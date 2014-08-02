@@ -22,13 +22,16 @@ namespace tots {
    * updating the GameState is run in every thread, its cost is effectively
    * reduced to the cost of running it once.
    */
+  // TODO: rename this class to TaskThread and have it run Subsystem::Task objects
   class SubsystemThread {
+    friend class Subsystem;
     friend class ThreadPool;
     public:
       SubsystemThread(const char *name, const GameState *gameState, SDL_sem *readySemaphore);
       virtual ~SubsystemThread();
       void init(const char *name);
 
+      bool tryRun(Subsystem *subsystem, Subsystem::Command command);
       void run(Subsystem *subsystem, Subsystem::Command command);
 
       bool isFree() { return SDL_AtomicGet(&m_free); }
@@ -48,13 +51,13 @@ namespace tots {
 
       void runCurrentSubsystem(Subsystem::Command command) {
         switch(command) {
-          case Subsystem::INIT:
+          case Subsystem::Command::INIT:
             m_currentSubsystem->init(m_gameState);
             break;
-          case Subsystem::UPDATE:
+          case Subsystem::Command::UPDATE:
             m_currentSubsystem->update(m_gameState);
             break;
-          case Subsystem::CLOSE:
+          case Subsystem::Command::CLOSE:
             m_currentSubsystem->close(m_gameState);
             break;
           default:

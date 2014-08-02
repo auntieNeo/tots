@@ -5,7 +5,7 @@
 #include "../utility/priorityQueue.h"
 #include "subsystem.h"
 
-namespace tots::framework {
+namespace tots {
   class GameState;
   class AggregateQueue;
   class ThreadPool;
@@ -61,14 +61,15 @@ namespace tots::framework {
       GameState *m_state;
 //      AggregateQueue<Message> *m_messageQueue;
       typedef MinPriorityQueue< uint64_t, Task > TaskQueue;
-      TaskQueue *m_taskQueue;
+      TaskQueue *m_taskQueue, *m_overdueTaskQueue;
 
       Subsystem **m_subsystems;
       size_t m_numSubsystems;
 
       ThreadPool *m_threads;
 
-      void m_scheduleTask(Subsystem *subsystem, Subsystem::Command command, uint32_t gameTime, Subsystem::Priority priority = Subsystem::SUBSYSTEM_PRIORITY);
+      void m_scheduleTask(const Task &task, uint32_t gameTime, Subsystem::Priority priority = Subsystem::Priority::SUBSYSTEM);
+      bool m_tryRunTask(Task &task);
   };
 }
 

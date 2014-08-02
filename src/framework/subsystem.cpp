@@ -1,5 +1,7 @@
 #include "subsystem.h"
 
+#include "subsystemThread.h"
+
 #include <cstdio>
 
 namespace tots {
@@ -10,7 +12,7 @@ namespace tots {
    * classes should also assume that their constructors will also be called from
    * the main thread.
    */
-  Subsystem::Subsystem() : m_lastThread(NULL) {
+  Subsystem::Subsystem() : m_lastThread(NULL), m_hoggedThread(NULL) {
   }
 
   /**
@@ -19,6 +21,16 @@ namespace tots {
    * Most of the real cleanup might actually happen in close() and m_close().
    */
   Subsystem::~Subsystem() {
+    if(m_hoggedThread != NULL) {
+      /**
+       * Normally, m_readySemaphore is owned by the ThreadPool class. With a
+       * hogged thread, the Subsystem object effectively owns the semaphore and
+       * must destroy it here.
+       */
+      SDL_DestroySemaphore(m_hoggedThread->m_readySemaphore);
+      m_hoggedThread->m_readySemaphore = NULL;
+      delete m_hoggedThread;
+    }
   }
 
   /**
@@ -37,6 +49,16 @@ namespace tots {
     m_init(state);
   }
 
+  /**
+   * The update() method is called regularly from the GameLoop according to the
+   * Subsystem object's period, among other factors such as thread availability.
+   * This method performs some per-subsystem-tick upkeep and then immediately
+   * calls the m_update() method on itself.
+   *
+   * Derived Subsystem classes must implement m_update() to update themselves.
+   *
+   * \sa m_update()
+   */
   void Subsystem::update(const GameState *state) {
     // TODO: determine and update the delta time in m_dt
     m_update(state);

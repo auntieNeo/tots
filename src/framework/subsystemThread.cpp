@@ -39,6 +39,16 @@ namespace tots {
     delete m_gameState;
   }
 
+  bool SubsystemThread::tryRun(Subsystem *subsystem, Subsystem::Command command) {
+    // check if the thread is free and not running
+    if(this->isFree()) {
+      // run the subsystem (non-blocking)
+      run(subsystem, command);
+      return true;
+    }
+    return false;
+  }
+
   void SubsystemThread::run(Subsystem *subsystem, Subsystem::Command command) {
     // assert that this thread is free and not running
     assert(this->isFree());
