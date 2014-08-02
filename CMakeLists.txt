@@ -106,7 +106,7 @@ if(WIN32)
   set(Boost_USE_STATIC_LIBS ON)
   set(Boost_USE_MULTITHREADED ON)
 endif(WIN32)
-find_package(Boost REQUIRED COMPONENTS exception filesystem system)
+find_package(Boost REQUIRED COMPONENTS exception filesystem system unit_test_framework)
 
 include_directories(SYSTEM ${Boost_INCLUDE_DIRS} ${GLEW_INCLUDE_DIR} ${OPENGL_INCLUDE_DIR} ${SDL2_INCLUDE_DIR})
 #link_directories(${Boost_LIBRARY_DIRS} ${CMAKE_SOURCE_DIR}/vs_libs/glew-1.10.0/lib/Release/Win32 ${CMAKE_SOURCE_DIR}/vs_libs/SDL2-2.0.3/lib/x86)
