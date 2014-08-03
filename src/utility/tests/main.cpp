@@ -28,5 +28,10 @@ BOOST_AUTO_TEST_CASE( test_MinPriorityQueue ) {
     for(size_t i = 0; i < 1000; ++i)
       queue.insert(rand(), rand());
     BOOST_CHECK(queue.size() == 1000);
+
+    // remove entries at random indexes
+    for(size_t i = 0; i < 500; i++)
+      queue.remove(rand() % queue.size());
+    BOOST_CHECK(queue.size() == 500);
   }
 }

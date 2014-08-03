@@ -22,6 +22,10 @@ namespace tots {
       bool hasNext() const { return m_heapSize > 0; }
 
       size_t size() const { return m_heapSize; };
+      T at(size_t index) const;
+      K keyAt(size_t index) const;
+
+      void remove(size_t index);
 
     private:
       struct KeyValuePair {
@@ -81,6 +85,45 @@ namespace tots {
       m_sinkMinHeapify(0);
 
     return result;
+  }
+
+  template<typename K, typename T>
+  T MinPriorityQueue<K, T>::at(size_t index) const {
+    assert(index < m_heapSize);
+    return m_heap[index].m_value;
+  }
+
+  template<typename K, typename T>
+  K MinPriorityQueue<K, T>::keyAt(size_t index) const {
+    assert(index < m_heapSize);
+    return m_heap[index].m_key;
+  }
+
+  template<typename K, typename T>
+  void MinPriorityQueue<K, T>::remove(size_t index) {
+    assert(m_heapSize > 0);
+    assert(index >= 0);
+    assert(index < m_heapSize);
+
+    // shrink the heap
+    m_heapSize -= 1;
+
+    if(index == m_heapSize)
+      return;  // removing the last element is trivial
+
+    // copy the element that fell off the heap to the given index
+    m_heap[index] = m_heap[m_heapSize];
+
+    if(index > 0) {
+      size_t parent = (index + 1) / 2 - 1;
+      // float heapify if the new key at index is smaller than its parent key
+      if(m_heap[index].m_key < m_heap[parent].m_key) {
+        m_floatMinHeapify(index);
+        return;
+      }
+    }
+    // sink heapify in case the new key at index is larger than either of its children
+    m_sinkMinHeapify(index);
   }
 
   template<typename K, typename T>

@@ -68,7 +68,15 @@ namespace tots {
          * party libraries such as most OpenGL implementations that don't
          * support being accessed from multiple threads.
          */
-        HOG_THREAD = 0x02
+        HOG_THREAD = 0x02,
+        /**
+         * With the UPDATE_EACH_FRAME hint enabled, the GameLoop object's task
+         * scheduler will always schedule the Subsystem object to update at
+         * the beginning of the rendering frame, or as close to the beginning
+         * as possible.
+         */
+        UPDATE_EACH_FRAME = 0x04,
+        REALTIME = 0x08
       };
 
       /**
@@ -128,6 +136,27 @@ namespace tots {
        */
       virtual const char *name() const = 0;
 
+      /**
+       * The updatePeriod() returns an integer indicating how often the
+       * GameLoop object's scheduler should call update() on the Subsystem
+       * object.
+       *
+       * If updatePeriod() returns a positive integer \i n, then the scheduler
+       * will schedule an update once every \i n game ticks.
+       *
+       * If updatePeriod() returns zero, the scheduler assumes that the update
+       * period should be determined by one or more hint flag provided by the
+       * hints() method.
+       *
+       * if updatePeriod() returns a negative number, the scheduler will not
+       * schedule updates for the subsystem.
+       *
+       * Derived Subsystem classes must implement the updatePeriod() method.
+       *
+       * \sa Hints::EACH_FRAME
+       */
+      virtual int32_t updatePeriod() const = 0;
+
     protected:
       /**
        * Derived classes must implement the m_init() method. m_init() is called
@@ -184,6 +213,13 @@ namespace tots {
   operator&(Subsystem::Hints a, Subsystem::Hints b) {
     return static_cast<Subsystem::Hints>(
         static_cast<uint32_t>(a) & static_cast<uint32_t>(b)
+        );
+  }
+
+  constexpr Subsystem::Hints
+  operator|(Subsystem::Hints a, Subsystem::Hints b) {
+    return static_cast<Subsystem::Hints>(
+        static_cast<uint32_t>(a) | static_cast<uint32_t>(b)
         );
   }
 }

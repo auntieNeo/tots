@@ -4,6 +4,8 @@
 #include "taskQueue.h"
 #include "threadPool.h"
 
+#include <SDL_timer.h>
+
 #define NUM_THREADS 1
 
 namespace tots {
@@ -23,7 +25,11 @@ namespace tots {
    * takes into account all of the Subsystem parameters and hints that need to
    * be known while the GameLoop is running.
    */
-  GameLoop::GameLoop(Subsystem **subsystems, size_t numSubsystems) : m_gameTime(0) {
+  GameLoop::GameLoop(Subsystem **subsystems, size_t numSubsystems) {
+    // set some game loop parameter defaults
+    setLoopHangCap(100);
+    setFramesPerSecond(60);
+
     // create an empty game state to share among the threads
     m_state = new GameState();  // FIXME: we might not even need to keep this around...
 
@@ -80,25 +86,51 @@ namespace tots {
      */
 
     // TODO: possibly introduce determinism by implementing subsystem priority and a thread gate
+    // FIXME: Need to actually wait for subsystems to be finished. This only hasn't crashed because drawing one triangle is fast. <_<
 
-    m_gameTime = 0;
-
+    // set up the time management variables
+    uint32_t gameTime = 0;
+    uint32_t frameCount = 0;
+    uint32_t lastTime = SDL_GetTicks();
+    double frameTimeAccumulator = 0.0f;
     while(1) {
-      // for every task in the overdue queue
-//      while(m_overdueTaskQueue->hasNext()) {
-        // TODO: try to run overdue tasks
-//      }
+      // update the time management variables
+      uint32_t newTime = SDL_GetTicks();
+      uint32_t elapsedTime = newTime - lastTime;
+      assert(elapsedTime <= 100);
+      if(elapsedTime > m_loopHangCap)
+        // don't let the game loop hang into a "spiral of death"
+        elapsedTime = m_loopHangCap;
+      frameTimeAccumulator += elapsedTime;
+      gameTime += elapsedTime;
+      while(frameTimeAccumulator >= m_frameTime) {
+        // add to the frame count
+        // frameTimeAccumulator will keep the remainder
+        // there is some rounding error, but it should be fine
+        frameTimeAccumulator -= m_frameTime;
+        frameCount += 1;
+      }
 
+      // for every task in the overdue queue
+      while(m_overdueTaskQueue->hasNext()) {
+        // TODO: try to run overdue tasks
+      }
+
+      // for every task in the task queue
       while(m_taskQueue->hasNext()) {
         // check if the task is due
         uint32_t nextTaskTime = m_taskQueue->peekNextKey().m_data.m_time;
         Subsystem::Priority nextTaskPriority = m_taskQueue->peekNextKey().m_data.m_priority;
-        if(nextTaskTime >= m_gameTime) {
+        if(nextTaskTime <= gameTime) {
           // take the task from the task queue
           Task nextTask = m_taskQueue->popNext();
           // try to run the task
           if(m_tryRunTask(nextTask)) {
-            // TODO: schedule the next task based on the subsystem's update period
+            // schedule the next task based on the subsystem's update period
+            if((nextTask.subsystem()->hints() & Subsystem::Hints::UPDATE_EACH_FRAME) != Subsystem::Hints::NONE) {
+              // FIXME: determine the frametime, etc.
+              m_scheduleTask(Task(nextTask.subsystem(), Subsystem::Command::UPDATE), gameTime /* FIXME: don't do this */, Subsystem::Priority::NORMAL, m_taskQueue);
+            }
           }
           else {
             // add the task to the overdue task queue if we could not run it
@@ -112,10 +144,6 @@ namespace tots {
 
       // if the task can't be scheduled now, add it to an overdue queue
 
-      // FIXME: Need to actually wait for subsystems to be finished. This only hasn't crashed because drawing one triangle is fast. <_<
-      for(size_t i = 0; i < m_numSubsystems; ++i) {
-        m_threads->run(m_subsystems[i], Subsystem::Command::UPDATE);  // FIXME: don't actually schedule subsystems like this
-      }
 
       while(false) {
         // TODO: append GameState message queue to m_queue

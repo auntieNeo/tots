@@ -46,6 +46,40 @@ namespace tots {
 
       void run();
 
+      // game loop parameters
+      /**
+       * A cap in milliseconds on how long the main loop is allowed to hang.
+       * This prevents the main loop from entering a "spiral of death" when
+       * whatever task it is performing goes over its time bugdet and falls
+       * into a state of spiraling time debt.
+       *
+       * \sa setLoopHangCap()
+       */
+      uint32_t loopHangCap() const { return m_loopHangCap; }
+      /**
+       * A cap in milliseconds on how long the main loop is allowed to hang.
+       * \sa loopHangCap()
+       */
+       void setLoopHangCap(uint32_t loopHangCap) { m_loopHangCap = loopHangCap; }
+
+       /**
+        * The number of frames to render in each second. Internally, this is
+        * represented by the number of milliseconds between frames.
+        *
+        * \sa setFramesPerSecond()
+        */
+       uint32_t framesPerSecond() const { return m_framesPerSecond; }
+       /**
+        * The number of frames to render in each second. Internally, this is
+        * represented by the number of milliseconds between frames.
+        *
+        * \sa framesPerSecond()
+        */
+       void setFramesPerSecond(uint32_t framesPerSecond) {
+         m_framesPerSecond = framesPerSecond;
+         m_frameTime = 1 / (m_framesPerSecond/1000.0f);
+       }
+
     private:
       GameState *m_state;
 //      AggregateQueue<Message> *m_messageQueue;
@@ -56,7 +90,11 @@ namespace tots {
 
       ThreadPool *m_threads;
 
-      size_t m_gameTime;
+      // game loop parameters
+      uint32_t m_loopHangCap;
+      uint32_t m_framesPerSecond;
+      double m_frameTime; // milliseconds per frame
+//      uint32_t m_gameTick = 1;
 
       void m_scheduleTask(const Task &task, uint32_t gameTime, Subsystem::Priority priority, TaskQueue *queue);
       void m_scheduleTask(const Task &task, uint32_t gameTime, Subsystem::Priority priority) { m_scheduleTask(task, gameTime, priority, m_taskQueue); }
