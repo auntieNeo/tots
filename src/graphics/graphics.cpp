@@ -281,7 +281,7 @@ namespace tots {
   void Graphics::m_update(const GameState *state) {
     // TODO: set graphics context
     // TODO: buffering, etc.
-    glClear(0xFFFF);
+    glClear(GL_COLOR_BUFFER_BIT);
     for(size_t i = 0; i < m_numComponents; ++i) {
       m_components[i]->draw(this);
     }
