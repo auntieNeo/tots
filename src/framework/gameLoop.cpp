@@ -112,14 +112,39 @@ namespace tots {
       }
 
       /*
-      // for every task in the overdue queue
-      while(m_overdueTaskQueue->hasNext()) {
-        // TODO: try to run overdue tasks
+      // FIXME: this design falls apart if the highest priority overdue task can't be run, but the next highest priority task can be run
+      if(m_overdueTaskQueue->hasNext()) {
+        printf("have an overdue task\n");
+        // try to run the highest priority overdue task
+        // FIXME: mad code duplication in here
+        // check if the task is due
+        uint32_t nextTaskTime = m_overdueTaskQueue->peekNextKey().m_data.m_time;
+        Subsystem::Priority nextTaskPriority = m_overdueTaskQueue->peekNextKey().m_data.m_priority;
+        if(nextTaskTime <= gameTime) {
+          // take the task from the task queue
+          Task nextTask = m_overdueTaskQueue->popNext();
+          // try to run the task
+          if(m_tryRunTask(nextTask)) {
+            // TODO: check for update period hints
+            // schedule the next task based on the subsystem's update period
+            m_scheduleTask(Task(nextTask.subsystem(), Subsystem::Command::UPDATE),
+                nextTaskTime + nextTask.subsystem()->updatePeriod(),
+                Subsystem::Priority::NORMAL,
+                m_overdueTaskQueue);
+            assert(m_overdueTaskQueue->hasNext());
+          }
+          else {
+            // add the task to the overdue task queue if we could not run it
+            // (i.e. no suitable threads were available)
+            m_scheduleTask(nextTask, nextTaskTime, nextTaskPriority, m_overdueTaskQueue);
+            printf("well, crap.\n");
+          }
+        }
       }
       */
 
-      // for every task in the task queue
-      while(m_taskQueue->hasNext()) {
+      // check the first task in the task queue
+      if(m_taskQueue->hasNext()) {
         // check if the task is due
         uint32_t nextTaskTime = m_taskQueue->peekNextKey().m_data.m_time;
         Subsystem::Priority nextTaskPriority = m_taskQueue->peekNextKey().m_data.m_priority;
@@ -139,15 +164,15 @@ namespace tots {
           else {
             // add the task to the overdue task queue if we could not run it
             // (i.e. no suitable threads were available)
-            m_scheduleTask(nextTask, nextTaskTime, nextTaskPriority, m_overdueTaskQueue);
-            printf("well, crap.\n");
+            m_scheduleTask(nextTask, nextTaskTime, nextTaskPriority, m_taskQueue /*FIXME*/);
+//            printf("well, crap.\n");
           }
         }
-
       }
       // check if the task can be run (i.e. threads are available)
 
       // if the task can't be scheduled now, add it to an overdue queue
+//      printf("whoo, got out of here\n");
 
 
       while(false) {
