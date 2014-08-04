@@ -6,6 +6,8 @@
 
 #include <SDL_timer.h>
 
+#include <unistd.h>
+
 #define NUM_THREADS 1
 
 namespace tots {
@@ -165,15 +167,13 @@ namespace tots {
             // add the task to the overdue task queue if we could not run it
             // (i.e. no suitable threads were available)
             m_scheduleTask(nextTask, nextTaskTime, nextTaskPriority, m_taskQueue /*FIXME*/);
-//            printf("well, crap.\n");
+            assert(m_taskQueue->hasNext());
           }
         }
       }
-      // check if the task can be run (i.e. threads are available)
 
-      // if the task can't be scheduled now, add it to an overdue queue
-//      printf("whoo, got out of here\n");
-
+      // sleep to let other threads run
+      sleep(1);  // FIXME: do this some other way
 
       while(false) {
         // TODO: append GameState message queue to m_queue
