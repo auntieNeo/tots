@@ -1,10 +1,13 @@
 #include "threadPool.h"
 
+#include "../log.h"
 #include "gameState.h"
 #include "subsystemThread.h"
 #include "subsystem.h"
 
 #include <cstdio>
+#include <SDL_thread.h>
+#include <SDL_mutex.h>
 
 #define MAX_THREADS 16
 
@@ -33,14 +36,41 @@ namespace tots {
     delete[] m_threads;
   }
 
-  void ThreadPool::run(Subsystem *subsystem, Subsystem::Command command) {
-    // FIXME: These need to be queued. This method should never, ever block.
-    // wait for a free thread
-    waitReady();  // FIXME: should not block here
+  void ThreadPool::run(Task &task) {
+    // wait for a free thread; blocking
+    waitReady();
+    m_run(task);
+  }
+
+  bool ThreadPool::tryRun(Task &task) {
+    // wait for a free thread; non-blocking
+    if(tryWaitReady()) {
+      m_run(task);
+      return true;
+    }
+    return false;
+  }
+
+  bool ThreadPool::tryWaitReady() {
+    int response = SDL_SemTryWait(m_readySemaphore);
+    if(response == 0)
+      return true;
+    else if(response == SDL_MUTEX_TIMEDOUT)
+      return false;
+    if(response < 0) {
+      log_SDL_error("Error waiting for semaphore");
+      exit(1);  // FIXME: abort properly
+    }
+    assert(false);  // if we get here, there's an SDL flag I don't know about
+    return false;
+  }
+
+  void ThreadPool::m_run(Task &task) {
+    // NOTE: this routine assumes that we have locked the semaphore and that a thread is available
 
     // try using the same thread, to avoid cache misses
-    if(subsystem->m_lastThread != NULL && subsystem->m_lastThread->isFree()) {
-      subsystem->m_lastThread->run(subsystem, command);
+    if(task.lastThread() != NULL && task.lastThread()->isFree()) {
+      task.lastThread()->run(task);
       return;
     }
 
@@ -52,13 +82,9 @@ namespace tots {
         break;
       }
     }
-    assert(threadIndex != -1);
+    assert(threadIndex != -1);  // m_run() was called without waiting for free threads
 
     // run the subsystem on that thread
-    m_threads[threadIndex]->run(subsystem, command);
-  }
-
-  void ThreadPool::flush() {
-    // TODO: signal subsystems to run based on their priority and what threads are available
+    m_threads[threadIndex]->run(task);
   }
 }

@@ -11,6 +11,7 @@ namespace tots {
   class MinPriorityQueue {
     public:
       MinPriorityQueue(size_t size);
+      MinPriorityQueue(const MinPriorityQueue &orig);
       virtual ~MinPriorityQueue();
 
       void insert(const K &key, const T &value);
@@ -45,6 +46,15 @@ namespace tots {
     m_heapSize = 0;
     m_heap = static_cast<KeyValuePair *>(malloc(size * sizeof(KeyValuePair)));
     m_heapAllocated = size;
+  }
+
+  template<typename K, typename T>
+  MinPriorityQueue<K, T>::MinPriorityQueue(const MinPriorityQueue &orig) :
+    m_heapSize(orig.m_heapSize), m_heapAllocated(orig.m_heapAllocated)
+  {
+    assert(m_heapSize <= m_heapAllocated);
+    m_heap = static_cast<KeyValuePair *>(malloc(m_heapAllocated * sizeof(KeyValuePair)));
+    memcpy(m_heap, orig.m_heap, m_heapSize * sizeof(KeyValuePair));
   }
 
   template<typename K, typename T>

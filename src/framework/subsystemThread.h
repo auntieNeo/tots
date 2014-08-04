@@ -3,6 +3,7 @@
 
 #include "../common.h"
 #include "subsystem.h"
+#include "task.h"
 
 #include <SDL_thread.h>
 
@@ -31,8 +32,8 @@ namespace tots {
       virtual ~SubsystemThread();
       void init(const char *name);
 
-      bool tryRun(Subsystem *subsystem, Subsystem::Command command);
-      void run(Subsystem *subsystem, Subsystem::Command command);
+      bool tryRun(Task &task);
+      void run(Task &task);
 
       bool isFree() { return SDL_AtomicGet(&m_free); }
 
@@ -42,23 +43,24 @@ namespace tots {
       bool isDone() { return SDL_AtomicGet(&m_done); }
       void setDone(bool done) { SDL_AtomicSet(&m_done, done); }
 
-      Subsystem *currentSubsystem() const { return m_currentSubsystem; }
-      void setCurrentSubsystem(Subsystem *subsystem) { m_currentSubsystem = subsystem; }
+      Task *currentTask() const { return m_currentTask; }
+      void setCurrentTask(Task *task) { m_currentTask = task; }
 
       void waitRun() { SDL_SemWait(m_runSemaphore); }
       void signalRun() { assert(SDL_SemValue(m_runSemaphore) == 0);
                          SDL_SemPost(m_runSemaphore); }
 
+      // FIXME: this method belongs somewhere else, like inside Subsystem
       void runCurrentSubsystem(Subsystem::Command command) {
         switch(command) {
           case Subsystem::Command::INIT:
-            m_currentSubsystem->init(m_gameState);
+            currentTask()->subsystem()->init(m_gameState);
             break;
           case Subsystem::Command::UPDATE:
-            m_currentSubsystem->update(m_gameState);
+            currentTask()->subsystem()->update(m_gameState);
             break;
           case Subsystem::Command::CLOSE:
-            m_currentSubsystem->close(m_gameState);
+            currentTask()->subsystem()->close(m_gameState);
             break;
           default:
             assert(false);
@@ -67,8 +69,7 @@ namespace tots {
 
     private:
       GameState *m_gameState;
-      Subsystem *m_currentSubsystem;
-      Subsystem::Command m_command;
+      Task *m_currentTask;
 
       SDL_Thread *m_sdlThread;
       SDL_sem *m_runSemaphore, *m_readySemaphore;

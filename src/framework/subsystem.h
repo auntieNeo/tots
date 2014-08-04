@@ -24,6 +24,7 @@ namespace tots {
     friend class SubsystemThread;
     friend class ThreadPool;
     friend class GameLoop;
+    friend class Task;  // FIXME: should not need this; should be SubsystemTask
     public:
       /**
        * Subsystem::Command enumerates all of the abstract virtual methods that
@@ -75,8 +76,7 @@ namespace tots {
          * the beginning of the rendering frame, or as close to the beginning
          * as possible.
          */
-        UPDATE_EACH_FRAME = 0x04,
-        REALTIME = 0x08
+        UPDATE_EACH_FRAME = 0x04
       };
 
       /**

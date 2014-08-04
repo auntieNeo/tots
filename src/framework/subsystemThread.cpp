@@ -7,9 +7,8 @@
 #include <SDL_thread.h>
 
 namespace tots {
-  SubsystemThread::SubsystemThread(const char *name, const GameState *gameState, SDL_sem *readySemaphore) : m_readySemaphore(readySemaphore) {
-    m_currentSubsystem = NULL;
-
+  SubsystemThread::SubsystemThread(const char *name, const GameState *gameState, SDL_sem *readySemaphore) :
+    m_currentTask(NULL), m_readySemaphore(readySemaphore) {
     // copy the game state from the given gameState
     m_gameState = new GameState(*gameState);
 
@@ -39,26 +38,26 @@ namespace tots {
     delete m_gameState;
   }
 
-  bool SubsystemThread::tryRun(Subsystem *subsystem, Subsystem::Command command) {
+  bool SubsystemThread::tryRun(Task &task) {
     // check if the thread is free and not running
     if(this->isFree()) {
       // run the subsystem (non-blocking)
-      run(subsystem, command);
+      run(task);
       return true;
     }
     return false;
   }
 
-  void SubsystemThread::run(Subsystem *subsystem, Subsystem::Command command) {
+  void SubsystemThread::run(Task &task) {  // FIXME: figure out how task should be passed... probably by pointer
+    // FIXME: maybe we should block here? or provide a blocking version?
     // assert that this thread is free and not running
     assert(this->isFree());
 
     // change the current subsystem
-    this->setCurrentSubsystem(subsystem);
-    m_command = command;
+    this->setCurrentTask(&task);
 
-    // set the last thread for this subsystem
-    subsystem->setLastThread(this);
+    // set the last thread for this task
+    task.setLastThread(this);
 
     // mark this thread as not free
     this->setFree(false);
@@ -80,9 +79,11 @@ namespace tots {
       self->waitRun();
 
       // TODO: automatically update the game state
+      // TODO: provide a callback to derived classes so that a SubsystemThread class can update the game state
 
-      // run the subsystem
-      self->runCurrentSubsystem(self->m_command);
+      // run the current task
+//      self->currentTask()->run();  // FIXME
+      self->runCurrentSubsystem(self->currentTask()->command());  // FIXME
     }
     return 0;
   }

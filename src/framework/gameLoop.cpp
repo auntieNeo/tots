@@ -97,7 +97,7 @@ namespace tots {
       // update the time management variables
       uint32_t newTime = SDL_GetTicks();
       uint32_t elapsedTime = newTime - lastTime;
-      assert(elapsedTime <= 100);
+//      assert(elapsedTime <= 100);
       if(elapsedTime > m_loopHangCap)
         // don't let the game loop hang into a "spiral of death"
         elapsedTime = m_loopHangCap;
@@ -111,10 +111,12 @@ namespace tots {
         frameCount += 1;
       }
 
+      /*
       // for every task in the overdue queue
       while(m_overdueTaskQueue->hasNext()) {
         // TODO: try to run overdue tasks
       }
+      */
 
       // for every task in the task queue
       while(m_taskQueue->hasNext()) {
@@ -126,16 +128,19 @@ namespace tots {
           Task nextTask = m_taskQueue->popNext();
           // try to run the task
           if(m_tryRunTask(nextTask)) {
+            // TODO: check for update period hints
             // schedule the next task based on the subsystem's update period
-            if((nextTask.subsystem()->hints() & Subsystem::Hints::UPDATE_EACH_FRAME) != Subsystem::Hints::NONE) {
-              // FIXME: determine the frametime, etc.
-              m_scheduleTask(Task(nextTask.subsystem(), Subsystem::Command::UPDATE), gameTime /* FIXME: don't do this */, Subsystem::Priority::NORMAL, m_taskQueue);
-            }
+            m_scheduleTask(Task(nextTask.subsystem(), Subsystem::Command::UPDATE),
+                nextTaskTime + nextTask.subsystem()->updatePeriod(),
+                Subsystem::Priority::NORMAL,
+                m_taskQueue);
+            assert(m_taskQueue->hasNext());
           }
           else {
             // add the task to the overdue task queue if we could not run it
             // (i.e. no suitable threads were available)
             m_scheduleTask(nextTask, nextTaskTime, nextTaskPriority, m_overdueTaskQueue);
+            printf("well, crap.\n");
           }
         }
 
@@ -157,10 +162,12 @@ namespace tots {
       // TODO: timeout and /stop/ dropping frames
     }
 
-    // close all of the subsystems
+    // TODO: close all of the subsystems
+    /*
     for(size_t i = 0; i < m_numSubsystems; ++i) {
       m_threads->run(m_subsystems[i], Subsystem::Command::CLOSE);
     }
+    */
   }
 
   void GameLoop::m_scheduleTask(const Task &task, uint32_t gameTime, Subsystem::Priority priority, TaskQueue *queue) {
@@ -188,12 +195,10 @@ namespace tots {
       assert(task.subsystem()->m_hoggedThread != NULL);
       if(task.subsystem()->m_hoggedThread->isFree()) {
         // run the task on the subsystem's hogged thread
-        return task.subsystem()->m_hoggedThread->tryRun(task.subsystem(), task.command());
+        return task.subsystem()->m_hoggedThread->tryRun(task);
       }
     }
-    else {
-      // TODO: try to run the task using the thread pool
-    }
-    return false;
+    // try to run the task through the thread pool
+    return m_threads->tryRun(task);
   }
 }
