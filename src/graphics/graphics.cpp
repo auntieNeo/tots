@@ -126,6 +126,11 @@ namespace tots {
         exit(1);  // FIXME: abort properly
     }
 
+    // bind the vertex attribute locations
+    // FIXME: don't do this here
+    glBindAttribLocation(m_program, 0, "vertex_position");
+    glBindAttribLocation(m_program, 1, "vertex_color");
+
     // link the shader program
     fprintf(stderr, "Linking shader program...\n");
     glLinkProgram(m_program);

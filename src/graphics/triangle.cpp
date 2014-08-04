@@ -44,7 +44,7 @@ namespace tots {
     glBindBuffer(GL_ARRAY_BUFFER, positionBufferHandle);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (GLubyte *)NULL);
     // map index 1 to the color buffer
-    glBindBuffer(GL_ARRAY_BUFFER, positionBufferHandle);
+    glBindBuffer(GL_ARRAY_BUFFER, colorBufferHandle);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (GLubyte *)NULL);
   }
 
