@@ -23,12 +23,10 @@ namespace tots {
   Subsystem::~Subsystem() {
     if(m_hoggedThread != NULL) {
       /**
-       * Normally, m_readySemaphore is owned by the ThreadPool class. With a
-       * hogged thread, the Subsystem object effectively owns the semaphore and
+       * Normally, a SubsystemThread is owned by the ThreadPool class. With a
+       * hogged thread, the Subsystem object effectively owns the thread and
        * must destroy it here.
        */
-      SDL_DestroySemaphore(m_hoggedThread->m_readySemaphore);
-      m_hoggedThread->m_readySemaphore = NULL;
       delete m_hoggedThread;
     }
   }

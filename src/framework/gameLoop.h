@@ -9,6 +9,7 @@ namespace tots {
   class GameState;
   class AggregateQueue;
   class ThreadPool;
+  class ThreadSignal;
   class Task;
   class TaskQueue;
 
@@ -38,6 +39,26 @@ namespace tots {
    * <a href="http://gameprogrammingpatterns.com/game-loop.html">Game Loop - Game Programming Patterns</a>
    *
    * <a href="http://gafferongames.com/game-physics/fix-your-timestep/">Fix Your Timestep! - gafferongames.com</a>
+   *
+   * @startuml{gameLoopExample.png}
+   * participant User
+   *
+   * User -> A: DoWork
+   * activate A #FFBBBB
+   *
+   * A -> A: Internal call
+   * activate A #DarkSalmon
+   *
+   * A -> B: << createRequest >>
+   * activate B
+   *
+   * B --> A: RequestCreated
+   * A -> User: Done
+   * deactivate A
+   * A -> B
+   * deactivate A
+   *
+   * @enduml
    */
   class GameLoop {
     public:
@@ -88,7 +109,9 @@ namespace tots {
       Subsystem **m_subsystems;
       size_t m_numSubsystems;
 
+      // thread resources
       ThreadPool *m_threads;
+      ThreadSignal *m_signal;
 
       // game loop parameters
       uint32_t m_loopHangCap;

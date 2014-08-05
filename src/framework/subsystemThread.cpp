@@ -3,12 +3,13 @@
 #include "gameState.h"
 #include "subsystem.h"
 #include "threadPool.h"
+#include "threadSignal.h"
 
 #include <SDL_thread.h>
 
 namespace tots {
-  SubsystemThread::SubsystemThread(const char *name, const GameState *gameState, SDL_sem *readySemaphore) :
-    m_currentTask(NULL), m_readySemaphore(readySemaphore) {
+  SubsystemThread::SubsystemThread(const char *name, const GameState *gameState, ThreadSignal *signal) :
+    m_currentTask(NULL), m_signal(signal) {
     // copy the game state from the given gameState
     m_gameState = new GameState(*gameState);
 
@@ -73,7 +74,7 @@ namespace tots {
       self->setFree(true);
 
       // let main thread know we're available
-      self->signalReady();
+      self->m_signal->signalReady();
 
       // wait for run signal (when the main thread wants us to run)
       self->waitRun();

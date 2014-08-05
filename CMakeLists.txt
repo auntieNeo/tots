@@ -111,6 +111,8 @@ find_package(Boost REQUIRED COMPONENTS exception filesystem system unit_test_fra
 include_directories(SYSTEM ${Boost_INCLUDE_DIRS} ${GLEW_INCLUDE_DIR} ${OPENGL_INCLUDE_DIR} ${SDL2_INCLUDE_DIR})
 #link_directories(${Boost_LIBRARY_DIRS} ${CMAKE_SOURCE_DIR}/vs_libs/glew-1.10.0/lib/Release/Win32 ${CMAKE_SOURCE_DIR}/vs_libs/SDL2-2.0.3/lib/x86)
 
-add_custom_target(doxygen doxygen)
+add_custom_target(documentation
+    plantuml -v -o ./src/documentation/images '"./src/**.(c|cpp|dox|h)"'
+    COMMAND doxygen)
 
 add_subdirectory("./src")

@@ -9,6 +9,7 @@
 
 namespace tots {
   class GameState;
+  class ThreadSignal;
 
   /**
    * The SubsystemThread class encapsulates an SDL thread that runs a Subsystem
@@ -28,7 +29,7 @@ namespace tots {
     friend class Subsystem;
     friend class ThreadPool;
     public:
-      SubsystemThread(const char *name, const GameState *gameState, SDL_sem *readySemaphore);
+      SubsystemThread(const char *name, const GameState *gameState, ThreadSignal *signal);
       virtual ~SubsystemThread();
       void init(const char *name);
 
@@ -71,11 +72,10 @@ namespace tots {
       GameState *m_gameState;
       Task *m_currentTask;
 
+      ThreadSignal *m_signal;
       SDL_Thread *m_sdlThread;
-      SDL_sem *m_runSemaphore, *m_readySemaphore;
+      SDL_sem *m_runSemaphore;
       SDL_atomic_t m_free, m_done;
-
-      void signalReady() { SDL_SemPost(m_readySemaphore); };
 
       static int m_run(void *self);
   };

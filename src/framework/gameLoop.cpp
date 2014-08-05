@@ -3,6 +3,7 @@
 #include "gameState.h"
 #include "taskQueue.h"
 #include "threadPool.h"
+#include "threadSignal.h"
 
 #include <SDL_timer.h>
 
@@ -29,7 +30,7 @@ namespace tots {
    */
   GameLoop::GameLoop(Subsystem **subsystems, size_t numSubsystems) {
     // set some game loop parameter defaults
-    setLoopHangCap(100);
+    setLoopHangCap(10000);
     setFramesPerSecond(60);
 
     // create an empty game state to share among the threads
@@ -44,8 +45,11 @@ namespace tots {
 
     // TODO: populate the game state
 
+    // create a signal to communicate with all of the threads
+    m_signal = new ThreadSignal();
+
     // create a pool of threads
-    m_threads = new ThreadPool(NUM_THREADS, m_state);
+    m_threads = new ThreadPool(NUM_THREADS, m_state, m_signal);
 
     // copy the subsystem pointers
     m_numSubsystems = numSubsystems;
@@ -55,17 +59,9 @@ namespace tots {
     // loop through each subsystem
     for(size_t i = 0; i < m_numSubsystems; ++i) {
       if((m_subsystems[i]->hints() & Subsystem::Hints::HOG_THREAD) != Subsystem::Hints::NONE) {
-        /*
-         * Allocate a threadReady semaphore here. Normally ThreadPool would be
-         * responsible for providing the semaphore, but now we need to provide
-         * it. The Subsystem class takes ownership of both the readySemaphore
-         * and the hogged thread, and it knows to de-allocate them in its
-         * destructor.
-         */
-        SDL_sem *readySemaphore = SDL_CreateSemaphore(0);
         // create a hogged thread for each subsystem that needs one
         m_subsystems[i]->m_hoggedThread = new SubsystemThread(
-            m_subsystems[i]->name(), m_state, readySemaphore);
+            m_subsystems[i]->name(), m_state, m_signal);
       }
       // schedule each subsystem for initialization
       m_scheduleTask(Task(m_subsystems[i], Subsystem::Command::INIT), 0, Subsystem::Priority::HIGHEST);
@@ -74,6 +70,7 @@ namespace tots {
 
   GameLoop::~GameLoop() {
     delete m_threads;
+    delete m_signal;
     delete m_overdueTaskQueue;
     delete m_taskQueue;
 //    delete m_messageQueue;
@@ -95,11 +92,16 @@ namespace tots {
     uint32_t frameCount = 0;
     uint32_t lastTime = SDL_GetTicks();
     double frameTimeAccumulator = 0.0f;
+
+    uint32_t fpsTime = 0;
+    uint32_t framesThisSecond = 0;
+
     while(1) {
       // update the time management variables
       uint32_t newTime = SDL_GetTicks();
       uint32_t elapsedTime = newTime - lastTime;
-//      assert(elapsedTime <= 100);
+      lastTime = newTime;
+      assert(elapsedTime <= 10000);
       if(elapsedTime > m_loopHangCap)
         // don't let the game loop hang into a "spiral of death"
         elapsedTime = m_loopHangCap;
@@ -111,6 +113,12 @@ namespace tots {
         // there is some rounding error, but it should be fine
         frameTimeAccumulator -= m_frameTime;
         frameCount += 1;
+      }
+      // calculate frames per second
+      fpsTime += elapsedTime;
+      if(fpsTime >= 1000) {
+        printf("frames per second: %d\n", framesThisSecond);
+        fpsTime = framesThisSecond = 0;
       }
 
       /*
@@ -145,6 +153,31 @@ namespace tots {
       }
       */
 
+      /*
+       * There are three main cases that the game loop has to account for when
+       * scheduling tasks on threads.
+       *
+       * The first case is the easiest. If there are no thread resources
+       * available the game loop must wait for them to become available.
+       *
+       * The second case is also fairly easy. If there are thread resources
+       * available, and there is a task in the task queue that can be run with
+       * those resources, then the game loop signals a thread to run that task.
+       *
+       * These first two cases are both solved with the call to
+       * m_signal->waitReady().
+       *
+       * The third case is the most complicated. If there are thread resources
+       * available, but there are no tasks in the task queue that can be run
+       * with those resources, then game loop must either wait for a running
+       * thread to complete, or it must sleep to give other threads a chance to
+       * finish their execution. A busy wait does not work here.
+       */
+
+      // wait patiently for thread resources to become available
+      m_signal->waitReady();
+
+      // now we need to determine if there is a task that we can run
       // check the first task in the task queue
       if(m_taskQueue->hasNext()) {
         // check if the task is due
@@ -155,6 +188,7 @@ namespace tots {
           Task nextTask = m_taskQueue->popNext();
           // try to run the task
           if(m_tryRunTask(nextTask)) {
+            framesThisSecond += 1;
             // TODO: check for update period hints
             // schedule the next task based on the subsystem's update period
             m_scheduleTask(Task(nextTask.subsystem(), Subsystem::Command::UPDATE),
@@ -173,7 +207,7 @@ namespace tots {
       }
 
       // sleep to let other threads run
-      sleep(1);  // FIXME: do this some other way
+//      SDL_Delay(1);  // FIXME: do this some other way
 
       while(false) {
         // TODO: append GameState message queue to m_queue

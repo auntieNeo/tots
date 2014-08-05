@@ -11,27 +11,23 @@ namespace tots {
   class Subsystem;
   class SubsystemThread;
   class Task;
+  class ThreadSignal;
   class ThreadPool {
     friend class SubsystemThread;
     friend class WorkerThread;
     public:
-      ThreadPool(size_t numThreads, const GameState *gs);
+      ThreadPool(size_t numThreads, const GameState *gs, ThreadSignal *signal);
       ~ThreadPool();
 
       void registerSubsystems(Subsystem **subsystems, size_t numSubsystems);
-      void run(Task &task);
+
+//      void run(Task &task);  // GameLoop handles all the blocking now
       bool tryRun(Task &task);
-      void flush();
 
     private:
       SubsystemThread **m_threads;
       size_t m_numThreads;
-      SDL_sem *m_readySemaphore;
-
-      void waitReady() { SDL_SemWait(m_readySemaphore); }
-      bool tryWaitReady();
-
-      void m_run(Task &task);
+      ThreadSignal *m_signal;
   };
 }
 
