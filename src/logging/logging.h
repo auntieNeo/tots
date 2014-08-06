@@ -4,15 +4,15 @@
 #include "../framework/subsystem.h"
 
 namespace tots {
-  class Logging : public Subsystem {
+  class Logging : public framework::Subsystem {
     public:
       Logging();
       ~Logging();
 
     protected:
-      virtual void m_init(const GameState *state);
-      virtual void m_update(const GameState *state);
-      virtual void m_close(const GameState *state);
+      virtual void m_init(const framework::GameState *state);
+      virtual void m_update(const framework::GameState *state);
+      virtual void m_close(const framework::GameState *state);
   };
 }
 

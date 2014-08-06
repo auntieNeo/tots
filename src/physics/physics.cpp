@@ -1,5 +1,7 @@
 #include "physics.h"
 
+using namespace tots::framework;
+
 namespace tots {
   Physics::Physics() {
   }

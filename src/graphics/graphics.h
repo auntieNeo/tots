@@ -7,9 +7,11 @@
 #include <cstddef>
 
 namespace tots {
-  class GameState;
+  namespace framework {
+    class GameState;
+  }
   class GraphicsComponent;
-  class Graphics : public Subsystem {
+  class Graphics : public framework::Subsystem {
     public:
       Graphics();
       ~Graphics();
@@ -21,9 +23,9 @@ namespace tots {
       int32_t updatePeriod() const { return 1; }
 
     protected:
-      void m_init(const GameState *state);
-      void m_update(const GameState *state);
-      void m_close(const GameState *state);
+      void m_init(const framework::GameState *state);
+      void m_update(const framework::GameState *state);
+      void m_close(const framework::GameState *state);
 
     private:
       SDL_Window *m_window;

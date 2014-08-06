@@ -3,7 +3,7 @@
 
 #include "subsystem.h"
 
-namespace tots {
+namespace tots { namespace framework {
   class SubsystemThread;
   class Task {
     public:
@@ -22,6 +22,6 @@ namespace tots {
       Subsystem *m_subsystem;
       Subsystem::Command m_command;
   };
-}
+} }
 
 #endif

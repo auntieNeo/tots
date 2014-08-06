@@ -1,6 +1,6 @@
 #include "eventQueue.h"
 
-namespace tots {
+namespace tots { namespace framework {
   EventQueue::EventQueue() {
   }
 
@@ -9,4 +9,4 @@ namespace tots {
 
   void EventQueue::appendEvent(Event *event) {
   }
-}
+} }

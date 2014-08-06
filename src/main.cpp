@@ -13,7 +13,7 @@
 
 int main(int argc, char **argv)
 {
-  tots::Subsystem **subsystems = new tots::Subsystem*[MAX_SUBSYSTEMS];
+  tots::framework::Subsystem **subsystems = new tots::framework::Subsystem*[MAX_SUBSYSTEMS];
   size_t numSubsystems = 0;
 
   if(SDL_Init((SDL_INIT_TIMER) != 0)) {
@@ -23,9 +23,9 @@ int main(int argc, char **argv)
 
   tots::Graphics *gfx = new tots::Graphics();
   assert(numSubsystems < MAX_SUBSYSTEMS);
-  subsystems[numSubsystems++] = static_cast<tots::Subsystem *>(gfx);
+  subsystems[numSubsystems++] = static_cast<tots::framework::Subsystem *>(gfx);
 
-  tots::GameLoop *loop = new tots::GameLoop(subsystems, numSubsystems);
+  tots::framework::GameLoop *loop = new tots::framework::GameLoop(subsystems, numSubsystems);
 
   loop->run();
 

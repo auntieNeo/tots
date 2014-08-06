@@ -3,7 +3,7 @@
 
 #include "../common.h"
 
-namespace tots {
+namespace tots { namespace framework {
   class GameState;
   class EventQueue;
   class ThreadPool;
@@ -222,6 +222,6 @@ namespace tots {
         static_cast<uint32_t>(a) | static_cast<uint32_t>(b)
         );
   }
-}
+} }
 
 #endif

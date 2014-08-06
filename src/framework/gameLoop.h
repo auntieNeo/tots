@@ -5,7 +5,7 @@
 #include "../utility/priorityQueue.h"
 #include "subsystem.h"
 
-namespace tots {
+namespace tots { namespace framework {
   class GameState;
   class AggregateQueue;
   class ThreadPool;
@@ -295,6 +295,6 @@ namespace tots {
       void m_scheduleTask(const Task &task, uint32_t gameTime, Subsystem::Priority priority) { m_scheduleTask(task, gameTime, priority, m_taskQueue); }
       bool m_tryRunTask(Task &task);
   };
-}
+} }
 
 #endif

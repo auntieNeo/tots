@@ -7,7 +7,7 @@
 
 #include <SDL_thread.h>
 
-namespace tots {
+namespace tots { namespace framework {
   class Subsystem;
   class SubsystemThread;
   class Task;
@@ -29,6 +29,6 @@ namespace tots {
       size_t m_numThreads;
       ThreadSignal *m_signal;
   };
-}
+} }
 
 #endif

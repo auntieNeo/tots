@@ -11,7 +11,7 @@
 
 #define MAX_THREADS 16
 
-namespace tots {
+namespace tots { namespace framework {
   ThreadPool::ThreadPool(size_t numThreads, const GameState *gs, ThreadSignal *signal) :
     m_numThreads(numThreads), m_signal(signal) {
     // create the threads
@@ -56,4 +56,4 @@ namespace tots {
     m_threads[threadIndex]->run(task);
     return true;
   }
-}
+} }

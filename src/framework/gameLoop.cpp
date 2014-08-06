@@ -11,7 +11,7 @@
 
 #define NUM_THREADS 1
 
-namespace tots {
+namespace tots { namespace framework {
   /**
    * The GameLoop constructor takes a list of Subsystem objects pointed to in
    * \a subsystems. These Subsystem objects will be used for the duration of the
@@ -98,6 +98,7 @@ namespace tots {
 
     while(1) {
       // update the time management variables
+      // TODO: put this stuff in a GameClock class
       uint32_t newTime = SDL_GetTicks();
       uint32_t elapsedTime = newTime - lastTime;
       lastTime = newTime;
@@ -260,4 +261,4 @@ namespace tots {
     // try to run the task through the thread pool
     return m_threads->tryRun(task);
   }
-}
+} }

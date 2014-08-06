@@ -1,9 +1,9 @@
 #include "gameState.h"
 
-namespace tots {
+namespace tots { namespace framework {
   GameState::GameState() {
   }
 
   GameState::~GameState() {
   }
-}
+} }

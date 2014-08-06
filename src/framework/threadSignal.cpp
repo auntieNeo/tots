@@ -3,7 +3,7 @@
 #include "../log.h"
 #include "../common.h"
 
-namespace tots {
+namespace tots { namespace framework {
   ThreadSignal::ThreadSignal() {
     m_readySemaphore = SDL_CreateSemaphore(0);
   }
@@ -24,4 +24,4 @@ namespace tots {
     assert(false);  // if we get here, there's an SDL flag I don't know about
     return false;
   }
-}
+} }

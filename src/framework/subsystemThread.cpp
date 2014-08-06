@@ -7,7 +7,7 @@
 
 #include <SDL_thread.h>
 
-namespace tots {
+namespace tots { namespace framework {
   SubsystemThread::SubsystemThread(const char *name, const GameState *gameState, ThreadSignal *signal) :
     m_currentTask(NULL), m_signal(signal) {
     // copy the game state from the given gameState
@@ -88,4 +88,4 @@ namespace tots {
     }
     return 0;
   }
-}
+} }

@@ -4,7 +4,7 @@
 #include "../utility/priorityQueue.h"
 #include "task.h"
 
-namespace tots {
+namespace tots { namespace framework {
   union TaskQueueKey {
     struct {
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
@@ -43,6 +43,6 @@ namespace tots {
       TaskQueue(size_t size);
       ~TaskQueue();
   };
-}
+} }
 
 #endif

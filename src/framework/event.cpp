@@ -1,6 +1,6 @@
 #include "event.h"
 
-namespace tots {
+namespace tots { namespace framework {
   /**
    * There are three types of events in ToTS:
    *
@@ -13,4 +13,4 @@ namespace tots {
    * reference count is placed on the event queue such that the queue is only
    * de-allocated once each intended subsystem has seen the events.
    */
-}
+} }

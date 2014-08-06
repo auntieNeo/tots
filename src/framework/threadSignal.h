@@ -3,7 +3,7 @@
 
 #include <SDL_mutex.h>
 
-namespace tots {
+namespace tots { namespace framework {
   class ThreadSignal {
     public:
       ThreadSignal();
@@ -18,6 +18,6 @@ namespace tots {
     private:
       SDL_sem *m_readySemaphore;
   };
-}
+} }
 
 #endif

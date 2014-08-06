@@ -3,7 +3,7 @@
 
 #include "../common.h"
 
-namespace tots {
+namespace tots { namespace framework {
   class Event;
   class EventQueue {
     public:
@@ -20,6 +20,6 @@ namespace tots {
       // every queue reference counted
       size_t m_numReferences;
   };
-}
+} }
 
 #endif

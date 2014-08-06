@@ -1,5 +1,7 @@
 #include "logging.h"
 
+using namespace tots::framework;
+
 namespace tots {
   Logging::Logging() {
   }

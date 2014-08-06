@@ -20,6 +20,8 @@ namespace fs = boost::filesystem;
 
 #include <cstdio>
 
+using namespace tots::framework;
+
 #define MAX_COMPONENTS 128
 
 namespace tots {

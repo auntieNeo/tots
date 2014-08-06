@@ -4,6 +4,9 @@
 #include "../framework/subsystem.h"
 
 namespace tots {
+  namespace framework {
+    class GameState;
+  }
   /**
    * The Physics subsystem is responsible for simulating 2D kinematics in the
    * Tots engine. This includes simulating velocity, acceleration, gravity, and
@@ -20,7 +23,7 @@ namespace tots {
    * or other things that might affect an object's ultimate trajectory, if it
    * so chooses.
    */
-  class Physics : public Subsystem {
+  class Physics : public framework::Subsystem {
     public:
       Physics();
       ~Physics();
@@ -28,9 +31,9 @@ namespace tots {
       const char *name() const { return "Physics Subsystem"; }
 
     protected:
-      void m_init(const GameState *state);
-      void m_update(const GameState *state);
-      void m_close(const GameState *state);
+      void m_init(const framework::GameState *state);
+      void m_update(const framework::GameState *state);
+      void m_close(const framework::GameState *state);
   };
 }
 

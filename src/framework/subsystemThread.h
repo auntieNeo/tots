@@ -7,7 +7,7 @@
 
 #include <SDL_thread.h>
 
-namespace tots {
+namespace tots { namespace framework {
   class GameState;
   class ThreadSignal;
 
@@ -79,6 +79,6 @@ namespace tots {
 
       static int m_run(void *self);
   };
-}
+} }
 
 #endif

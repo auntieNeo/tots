@@ -4,7 +4,7 @@
 
 #include <cstdio>
 
-namespace tots {
+namespace tots { namespace framework {
   /**
    * This constructs a Subsystem object.
    *
@@ -81,4 +81,4 @@ namespace tots {
     // TODO: close stuff I guess
     m_close(state);
   }
-}
+} }
