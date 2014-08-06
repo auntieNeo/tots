@@ -1,0 +1,22 @@
+skinparam shadowing false
+skinparam sequence {
+  ArrowColor #191970
+  LifeLineBorderColor black
+  LifeLineBackgroundColor #BFBFBF
+
+  NoteBackgroundColor white
+  NoteBorderColor #191970
+  
+  ParticipantBorderColor black
+  ParticipantBackgroundColor white
+'  ParticipantFontName Impact
+'  ParticipantFontSize 17
+'  ParticipantFontColor #A9DCDF
+  
+  ActorBorderColor black
+  ActorBackgroundColor white
+  ActorFontColor black
+'  ActorFontSize 17
+'  ActorFontName Aapex
+
+}

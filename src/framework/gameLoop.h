@@ -41,22 +41,194 @@ namespace tots {
    * <a href="http://gafferongames.com/game-physics/fix-your-timestep/">Fix Your Timestep! - gafferongames.com</a>
    *
    * @startuml{gameLoopExample.png}
-   * participant User
+   * !include ../../documentation/plantuml/doxygenColors.iuml
+   * participant GameLoop
+   * participant Graphics
+   * participant Physics
+   * participant Collision
+   * participant Resources
+   * participant Audio
    *
-   * User -> A: DoWork
-   * activate A #FFBBBB
+   * == Initialization (t = 0) ==
    *
-   * A -> A: Internal call
-   * activate A #DarkSalmon
+   * autonumber 0 0 "t = ##"
    *
-   * A -> B: << createRequest >>
-   * activate B
+   * GameLoop ->> Graphics: <b>INIT</b>
+   * activate Graphics
+   * GameLoop ->> Physics: <b>INIT</b>
+   * activate Physics
+   * GameLoop ->> Collision: <b>INIT</b>
+   * activate Collision
+   * GameLoop ->> Resources: <b>INIT</b>
+   * activate Resources
+   * GameLoop ->> Audio: <b>INIT</b>
+   * activate Audio
    *
-   * B --> A: RequestCreated
-   * A -> User: Done
-   * deactivate A
-   * A -> B
-   * deactivate A
+   * GameLoop <<- Graphics
+   * deactivate Graphics
+   * GameLoop <<- Physics
+   * deactivate Physics
+   * GameLoop <<- Collision
+   * deactivate Collision
+   * GameLoop <<- Resources
+   * deactivate Resources
+   * GameLoop <<- Audio
+   * deactivate Audio
+   *
+   * == Frame 0 (t = 0) ==
+   *
+   * autonumber 0 0 "t = ##"
+   *
+   * note over Graphics : Graphics
+   * GameLoop ->> Graphics: <b>UPDATE</b>
+   * activate Graphics
+   * note over Physics : Physics
+   * GameLoop ->> Physics: <b>UPDATE</b>
+   * activate Physics
+   * note over Resources : Resources
+   * GameLoop ->> Resources: <b>UPDATE</b>
+   * activate Resources
+   * note over Audio : Audio
+   * GameLoop ->> Audio: <b>UPDATE</b>
+   * activate Audio
+   *
+   * autonumber 7 0 "t = ##"
+   *
+   * GameLoop <<-- Audio
+   * deactivate Audio
+   *
+   * autonumber 16 0 "t = ##"
+   *
+   * GameLoop <<-- Graphics
+   * deactivate Graphics
+   *
+   * == Frame 1 (t = 16) ==
+   *
+   * autonumber 16 0 "t = ##"
+   *
+   * note over Graphics : Graphics
+   * GameLoop ->> Graphics: <b>UPDATE</b>
+   * activate Graphics
+   *
+   * note over Collision : Collision
+   * GameLoop ->> Collision: <b>UPDATE</b>
+   * activate Collision
+   *
+   * autonumber 32 0 "t = ##"
+   *
+   * GameLoop <<-- Graphics
+   * deactivate Graphics
+   *
+   * note over Physics : Physics
+   * GameLoop <<- Physics
+   * deactivate Physics
+   *
+   * == Frame 2 (t = 32) ==
+   *
+   * autonumber 32 0 "t = ##"
+   *
+   * note over Physics : Physics
+   * GameLoop ->> Physics: <b>UPDATE</b>
+   * activate Physics
+   * 
+   * autonumber 48 0 "t = ##"
+   *
+   * note over Collision : Collision
+   * GameLoop <<- Collision
+   * deactivate Collision
+   *
+   * == Frame 3 (t = 48) ==
+   *
+   * autonumber 48 0 "t = ##"
+   *
+   * note over Collision : Collision
+   * GameLoop ->> Collision: <b>UPDATE</b>
+   * activate Collision
+   *
+   * autonumber 64 0 "t = ##"
+   *
+   * note over Physics : Physics
+   * GameLoop <<- Physics
+   * deactivate Physics
+   *
+   * == Frame 4 (t = 64) ==
+   *
+   * autonumber 64 0 "t = ##"
+   *
+   * note over Physics : Physics
+   * GameLoop ->> Physics
+   * activate Physics
+   *
+   * autonumber 80 0 "t = ##"
+   *
+   * note over Collision : Collision
+   * GameLoop <<- Collision
+   * deactivate Collision
+   *
+   * == Frame 5 (t = 80) ==
+   *
+   * autonumber 80 0 "t = ##"
+   *
+   * note over Collision : Collision
+   * GameLoop ->> Collision: <b>UPDATE</b>
+   * activate Collision
+   *
+   * autonumber 96 0 "t = ##"
+   *
+   * note over Physics : Physics
+   * GameLoop <<- Physics
+   * deactivate Physics
+   *
+   * == Frame 6 (t = 96) ==
+   *
+   * autonumber 96 0 "t = ##"
+   *
+   * note over Physics : Physics
+   * GameLoop ->> Physics: <b>UPDATE</b>
+   * activate Physics
+   *
+   * autonumber 100 0 "t = ##"
+   *
+   * note over Resources : Resources
+   * GameLoop <<- Resources
+   * deactivate Resources
+   *
+   * autonumber 112 0 "t = ##"
+   *
+   * note over Collision : Collision
+   * GameLoop <<- Collision
+   * deactivate Collision
+   *
+   * deactivate Physics
+   *
+   * ... Many Frames Later ...
+   *
+   * == Closing (t = n) ==
+   *
+   * ' it is impossible to disable autonumber <_<
+   * autonumber 0 0 " "
+   *
+   * GameLoop ->> Graphics: t = n <b>CLOSE</b>
+   * activate Graphics
+   * GameLoop ->> Physics: t = n <b>CLOSE</b>
+   * activate Physics
+   * GameLoop ->> Collision: t = n <b>CLOSE</b>
+   * activate Collision
+   * GameLoop ->> Resources: t = n <b>CLOSE</b>
+   * activate Resources
+   * GameLoop ->> Audio: t = n <b>CLOSE</b>
+   * activate Audio
+   *
+   * GameLoop <<- Graphics: t = n
+   * deactivate Graphics
+   * GameLoop <<- Physics: t = n
+   * deactivate Physics
+   * GameLoop <<- Collision: t = n
+   * deactivate Collision
+   * GameLoop <<- Resources: t = n
+   * deactivate Resources
+   * GameLoop <<- Audio: t = n
+   * deactivate Audio
    *
    * @enduml
    */

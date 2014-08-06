@@ -112,7 +112,7 @@ include_directories(SYSTEM ${Boost_INCLUDE_DIRS} ${GLEW_INCLUDE_DIR} ${OPENGL_IN
 #link_directories(${Boost_LIBRARY_DIRS} ${CMAKE_SOURCE_DIR}/vs_libs/glew-1.10.0/lib/Release/Win32 ${CMAKE_SOURCE_DIR}/vs_libs/SDL2-2.0.3/lib/x86)
 
 add_custom_target(documentation
-    plantuml -v -o ./src/documentation/images '"./src/**.(c|cpp|dox|h)"'
+    plantuml -v -o "${CMAKE_CURRENT_SOURCE_DIR}/documentation/images" "'./src/**.(c|cpp|dox|h)'"
     COMMAND doxygen)
 
 add_subdirectory("./src")
