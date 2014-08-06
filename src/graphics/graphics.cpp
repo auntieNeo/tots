@@ -24,7 +24,7 @@ using namespace tots::framework;
 
 #define MAX_COMPONENTS 128
 
-namespace tots {
+namespace tots { namespace graphics {
   Graphics::Graphics() {
     m_window = NULL;
     m_vertShaders = m_fragShaders = NULL;
@@ -296,4 +296,4 @@ namespace tots {
     // swap the buffer to actually display it
     SDL_GL_SwapWindow(m_window);
   }
-}
+} }

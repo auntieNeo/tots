@@ -10,39 +10,41 @@ namespace tots {
   namespace framework {
     class GameState;
   }
-  class GraphicsComponent;
-  class Graphics : public framework::Subsystem {
-    public:
-      Graphics();
-      ~Graphics();
+  namespace graphics {
+    class GraphicsComponent;
+    class Graphics : public tots::framework::Subsystem {
+      public:
+        Graphics();
+        ~Graphics();
 
-      void addComponent(GraphicsComponent *component);
-      Subsystem::Hints hints() const { return /* Hints::HOG_THREAD | */ Hints::UPDATE_EACH_FRAME; }
+        void addComponent(GraphicsComponent *component);
+        Subsystem::Hints hints() const { return /* Hints::HOG_THREAD | */ Hints::UPDATE_EACH_FRAME; }
 
-      const char *name() const { return "Graphics Subsystem"; }
-      int32_t updatePeriod() const { return 1; }
+        const char *name() const { return "Graphics Subsystem"; }
+        int32_t updatePeriod() const { return 1; }
 
-    protected:
-      void m_init(const framework::GameState *state);
-      void m_update(const framework::GameState *state);
-      void m_close(const framework::GameState *state);
+      protected:
+        void m_init(const tots::framework::GameState *state);
+        void m_update(const tots::framework::GameState *state);
+        void m_close(const tots::framework::GameState *state);
 
-    private:
-      SDL_Window *m_window;
-      SDL_GLContext m_context;
+      private:
+        SDL_Window *m_window;
+        SDL_GLContext m_context;
 
-      GLuint *m_vertShaders, *m_fragShaders;
-      size_t m_numVertShaders, m_numFragShaders;
+        GLuint *m_vertShaders, *m_fragShaders;
+        size_t m_numVertShaders, m_numFragShaders;
 
-      GLuint m_program;
+        GLuint m_program;
 
-      GraphicsComponent **m_components;  // FIXME: use a hash/map/set here
-      size_t m_numComponents;
+        GraphicsComponent **m_components;  // FIXME: use a hash/map/set here
+        size_t m_numComponents;
 
-      static char **m_findShaders(const char *dirp, const char *ext, size_t *numShaders);
+        static char **m_findShaders(const char *dirp, const char *ext, size_t *numShaders);
 
-      GLuint m_loadShader(const char *sourcePath, GLenum shaderType);
-  };
+        GLuint m_loadShader(const char *sourcePath, GLenum shaderType);
+    };
+  }
 }
 
 #endif

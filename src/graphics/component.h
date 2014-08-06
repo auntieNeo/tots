@@ -1,7 +1,7 @@
 #ifndef GRAPHICS_COMPONENT_H_
 #define GRAPHICS_COMPONENT_H_
 
-namespace tots {
+namespace tots { namespace graphics {
   class Graphics;
   class GraphicsComponent {
     public:
@@ -11,6 +11,6 @@ namespace tots {
       virtual void init(Graphics *graphics) {}
       virtual void draw(const Graphics *graphics) const = 0;
   };
-}
+} }
 
 #endif

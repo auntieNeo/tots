@@ -21,7 +21,7 @@ int main(int argc, char **argv)
     return 1;
   }
 
-  tots::Graphics *gfx = new tots::Graphics();
+  tots::graphics::Graphics *gfx = new tots::graphics::Graphics();
   assert(numSubsystems < MAX_SUBSYSTEMS);
   subsystems[numSubsystems++] = static_cast<tots::framework::Subsystem *>(gfx);
 

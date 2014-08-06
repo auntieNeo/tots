@@ -9,8 +9,8 @@ CTestTestfile.cmake
 Makefile
 cmake_install.cmake
 /src/tots
-documentation/html
-documentation/latex
+/documentation/html
+/documentation/latex
 *.vcxproj
 *.vcxproj.filters
 *.vcxproj.user

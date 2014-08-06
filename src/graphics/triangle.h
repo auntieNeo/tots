@@ -4,7 +4,7 @@
 #include "component.h"
 #include "opengl.h"
 
-namespace tots {
+namespace tots { namespace graphics {
   class GraphicsTriangle : public GraphicsComponent {
     public:
       GraphicsTriangle();
@@ -16,6 +16,6 @@ namespace tots {
     private:
       GLuint m_vaoHandle;  // TODO: make this static
   };
-}
+} }
 
 #endif

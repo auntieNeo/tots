@@ -2,7 +2,7 @@
 
 #include "opengl.h"
 
-namespace tots {
+namespace tots { namespace graphics {
   /**
    * This is a triangle constructor.
    */
@@ -52,4 +52,4 @@ namespace tots {
     glBindVertexArray(m_vaoHandle);
     glDrawArrays(GL_TRIANGLES, 0, 3);
   }
-}
+} }
