@@ -38,7 +38,7 @@ namespace tots { namespace framework {
     return a.m_key == b.m_key;
   }
 
-  class TaskQueue : public MinPriorityQueue< TaskQueueKey, Task > {
+  class TaskQueue : public tots::utility::MinPriorityQueue< TaskQueueKey, Task > {
     public:
       TaskQueue(size_t size);
       ~TaskQueue();

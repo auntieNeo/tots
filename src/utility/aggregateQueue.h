@@ -1,7 +1,7 @@
 #ifndef AGGREGATE_QUEUE_H_
 #define AGGREGATE_QUEUE_H_
 
-namespace tots {
+namespace tots { namespace utility {
   class EventQueue;
   /*!
    * The AggregateQueue class combines many Queue objects efficiently.
@@ -69,6 +69,6 @@ namespace tots {
   template<typename T, typename K>
   T AggregateQueue<T, K>::peekBatch(const K &key) {
   }
-}
+} }
 
 #endif

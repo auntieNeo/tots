@@ -2,22 +2,24 @@
 #define BOOST_TEST_MODULE tots_utility_test
 #include <boost/test/unit_test.hpp>
 
+using namespace tots::utility;
+
 #include <cstdlib>
 
 template<typename K, typename T>
-void checkMinPriorityQueue(const tots::MinPriorityQueue<K, T> &queue);
+void checkMinPriorityQueue(const MinPriorityQueue<K, T> &queue);
 template<typename K, typename T>
-void checkMinPriorityQueueDestructive(tots::MinPriorityQueue<K, T> &queue);
+void checkMinPriorityQueueDestructive(MinPriorityQueue<K, T> &queue);
 
 template<typename K, typename T>
-void checkMinPriorityQueue(const tots::MinPriorityQueue<K, T> &queue) {
+void checkMinPriorityQueue(const MinPriorityQueue<K, T> &queue) {
   // easiest way to iterate over a priority queue is to just copy it
-  tots::MinPriorityQueue<K, T> queueCopy(queue);
+  MinPriorityQueue<K, T> queueCopy(queue);
   checkMinPriorityQueueDestructive(queueCopy);
 }
 
 template<typename K, typename T>
-void checkMinPriorityQueueDestructive(tots::MinPriorityQueue<K, T> &queue) {
+void checkMinPriorityQueueDestructive(MinPriorityQueue<K, T> &queue) {
   // make sure each key is in the correct order
   if(queue.hasNext()) {
     BOOST_CHECK(queue.size() > 0);
@@ -36,7 +38,7 @@ void checkMinPriorityQueueDestructive(tots::MinPriorityQueue<K, T> &queue) {
 
 BOOST_AUTO_TEST_CASE( test_MinPriorityQueue ) {
   { // test MinPriorityQueue starting from size 1
-    tots::MinPriorityQueue<int, int> queue(1);
+    MinPriorityQueue<int, int> queue(1);
     BOOST_CHECK(queue.size() == 0);
     BOOST_CHECK(!queue.hasNext());
     for(size_t i = 0; i < 100; ++i) {
@@ -49,7 +51,7 @@ BOOST_AUTO_TEST_CASE( test_MinPriorityQueue ) {
   }
 
   { // test MinPriorityQueue starting from size 0
-    tots::MinPriorityQueue<int, int> queue(0);
+    MinPriorityQueue<int, int> queue(0);
     BOOST_CHECK(queue.size() == 0);
     BOOST_CHECK(!queue.hasNext());
     for(size_t i = 0; i < 100; ++i) {
@@ -62,7 +64,7 @@ BOOST_AUTO_TEST_CASE( test_MinPriorityQueue ) {
   }
 
   { // test MinPriorityQueue with (deterministic) pseudo-random values
-    tots::MinPriorityQueue<int, int> queue(42);
+    MinPriorityQueue<int, int> queue(42);
     BOOST_CHECK(queue.size() == 0);
     BOOST_CHECK(!queue.hasNext());
     for(size_t i = 0; i < 1000; ++i) {

@@ -40,6 +40,10 @@ namespace tots { namespace framework {
    *
    * <a href="http://gafferongames.com/game-physics/fix-your-timestep/">Fix Your Timestep! - gafferongames.com</a>
    *
+   * The following sequence diagram is an example of possible deterministic
+   * operation of the game loop. It is just an example and still a work in
+   * progress.
+   *
    * @startuml{gameLoopExample.png}
    * !include ../../documentation/plantuml/doxygenColors.iuml
    * participant GameLoop

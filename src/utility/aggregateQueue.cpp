@@ -2,7 +2,12 @@
 
 #include "eventQueue.h"
 
-namespace tots {
+/**
+ * \file aggregateQueue.cpp
+ * Source file for the AggregateQueue class.
+ */
+
+namespace tots { namespace utility {
   AggregateQueue::AggregateQueue() {
   }
 
@@ -11,4 +16,4 @@ namespace tots {
 
   void AggregateQueue::append(EventQueue *queue) {
   }
-}
+} }

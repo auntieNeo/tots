@@ -6,7 +6,7 @@
 
 #include "../common.h"
 
-namespace tots {
+namespace tots { namespace utility {
   template<typename K, typename T>
   class MinPriorityQueue {
     public:
@@ -187,6 +187,6 @@ namespace tots {
     m_heap = newHeap;
     m_heapAllocated = newHeapAllocated;
   }
-}
+} }
 
 #endif
