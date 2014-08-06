@@ -3,7 +3,7 @@
 
 #include "../framework/subsystem.h"
 
-namespace tots {
+namespace tots { namespace physics {
   namespace framework {
     class GameState;
   }
@@ -23,7 +23,7 @@ namespace tots {
    * or other things that might affect an object's ultimate trajectory, if it
    * so chooses.
    */
-  class Physics : public framework::Subsystem {
+  class Physics : public tots::framework::Subsystem {
     public:
       Physics();
       ~Physics();
@@ -31,10 +31,10 @@ namespace tots {
       const char *name() const { return "Physics Subsystem"; }
 
     protected:
-      void m_init(const framework::GameState *state);
-      void m_update(const framework::GameState *state);
-      void m_close(const framework::GameState *state);
+      void m_init(const tots::framework::GameState *state);
+      void m_update(const tots::framework::GameState *state);
+      void m_close(const tots::framework::GameState *state);
   };
-}
+} }
 
 #endif

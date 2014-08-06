@@ -3,7 +3,7 @@
 
 #include "../framework/subsystem.h"
 
-namespace tots {
+namespace tots { namespace logging {
   class Logging : public framework::Subsystem {
     public:
       Logging();
@@ -14,6 +14,6 @@ namespace tots {
       virtual void m_update(const framework::GameState *state);
       virtual void m_close(const framework::GameState *state);
   };
-}
+} }
 
 #endif

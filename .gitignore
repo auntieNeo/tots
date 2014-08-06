@@ -11,6 +11,7 @@ cmake_install.cmake
 /src/tots
 /documentation/html
 /documentation/latex
+/breakpoints
 *.vcxproj
 *.vcxproj.filters
 *.vcxproj.user

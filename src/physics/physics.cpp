@@ -2,7 +2,7 @@
 
 using namespace tots::framework;
 
-namespace tots {
+namespace tots { namespace physics {
   Physics::Physics() {
   }
 
@@ -29,4 +29,4 @@ namespace tots {
    */
   void Physics::m_close(const GameState *state) {
   }
-}
+} }

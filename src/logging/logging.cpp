@@ -2,7 +2,7 @@
 
 using namespace tots::framework;
 
-namespace tots {
+namespace tots { namespace logging {
   Logging::Logging() {
   }
 
@@ -18,4 +18,4 @@ namespace tots {
 
   void Logging::m_close(const GameState *state) {
   }
-}
+} }
