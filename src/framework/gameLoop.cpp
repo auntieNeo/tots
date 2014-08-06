@@ -41,7 +41,7 @@ namespace tots { namespace framework {
 
     // create the task queue which schedules subsystems to run
     m_taskQueue = new TaskQueue(numSubsystems * 4);
-    m_overdueTaskQueue = new TaskQueue(numSubsystems * 4);
+    m_pendingTaskQueue = new TaskQueue(numSubsystems * 4);
 
     // TODO: populate the game state
 
@@ -71,7 +71,7 @@ namespace tots { namespace framework {
   GameLoop::~GameLoop() {
     delete m_threads;
     delete m_signal;
-    delete m_overdueTaskQueue;
+    delete m_pendingTaskQueue;
     delete m_taskQueue;
 //    delete m_messageQueue;
     delete m_state;
@@ -123,38 +123,6 @@ namespace tots { namespace framework {
       }
 
       /*
-      // FIXME: this design falls apart if the highest priority overdue task can't be run, but the next highest priority task can be run
-      if(m_overdueTaskQueue->hasNext()) {
-        printf("have an overdue task\n");
-        // try to run the highest priority overdue task
-        // FIXME: mad code duplication in here
-        // check if the task is due
-        uint32_t nextTaskTime = m_overdueTaskQueue->peekNextKey().m_data.m_time;
-        Subsystem::Priority nextTaskPriority = m_overdueTaskQueue->peekNextKey().m_data.m_priority;
-        if(nextTaskTime <= gameTime) {
-          // take the task from the task queue
-          Task nextTask = m_overdueTaskQueue->popNext();
-          // try to run the task
-          if(m_tryRunTask(nextTask)) {
-            // TODO: check for update period hints
-            // schedule the next task based on the subsystem's update period
-            m_scheduleTask(Task(nextTask.subsystem(), Subsystem::Command::UPDATE),
-                nextTaskTime + nextTask.subsystem()->updatePeriod(),
-                Subsystem::Priority::NORMAL,
-                m_overdueTaskQueue);
-            assert(m_overdueTaskQueue->hasNext());
-          }
-          else {
-            // add the task to the overdue task queue if we could not run it
-            // (i.e. no suitable threads were available)
-            m_scheduleTask(nextTask, nextTaskTime, nextTaskPriority, m_overdueTaskQueue);
-            printf("well, crap.\n");
-          }
-        }
-      }
-      */
-
-      /*
        * There are three main cases that the game loop has to account for when
        * scheduling tasks on threads.
        *
@@ -185,24 +153,27 @@ namespace tots { namespace framework {
         uint32_t nextTaskTime = m_taskQueue->peekNextKey().m_data.m_time;
         Subsystem::Priority nextTaskPriority = m_taskQueue->peekNextKey().m_data.m_priority;
         if(nextTaskTime <= gameTime) {
-          // take the task from the task queue
-          Task nextTask = m_taskQueue->popNext();
-          // try to run the task
-          if(m_tryRunTask(nextTask)) {
-            framesThisSecond += 1;
-            // TODO: check for update period hints
-            // schedule the next task based on the subsystem's update period
-            m_scheduleTask(Task(nextTask.subsystem(), Subsystem::Command::UPDATE),
-                nextTaskTime + nextTask.subsystem()->updatePeriod(),
-                Subsystem::Priority::NORMAL,
-                m_taskQueue);
-            assert(m_taskQueue->hasNext());
-          }
-          else {
-            // add the task to the overdue task queue if we could not run it
-            // (i.e. no suitable threads were available)
-            m_scheduleTask(nextTask, nextTaskTime, nextTaskPriority, m_taskQueue /*FIXME*/);
-            assert(m_taskQueue->hasNext());
+          // make sure no pending tasks are overdue (i.e. the next task isn't missing data dependencies)
+          if(!m_pendingTaskQueue->hasNext() || gameTime > m_pendingTaskQueue->peekNextKey().m_data.m_time) {
+            // take the task from the task queue
+            Task nextTask = m_taskQueue->popNext();
+            // try to run the task
+            if(m_tryRunTask(nextTask)) {
+              framesThisSecond += 1;
+              // TODO: check for update period hints
+              // schedule the next task based on the subsystem's update period
+              m_scheduleTask(Task(nextTask.subsystem(), Subsystem::Command::UPDATE),
+                  nextTaskTime + nextTask.subsystem()->updatePeriod(),
+                  Subsystem::Priority::NORMAL,
+                  m_taskQueue);
+              assert(m_taskQueue->hasNext());
+            }
+            else {
+              // add the task to the overdue task queue if we could not run it
+              // (i.e. no suitable threads were available)
+              m_scheduleTask(nextTask, nextTaskTime, nextTaskPriority, m_taskQueue /*FIXME*/);
+              assert(m_taskQueue->hasNext());
+            }
           }
         }
       }
@@ -216,10 +187,6 @@ namespace tots { namespace framework {
         // TODO: append subsystem message queue to m_queue
         // m_queue->append(thread->currentSubsystem()->popMessageQueue());
       }
-
-      // TODO: wait for each frame
-      // TODO: drop frames
-      // TODO: timeout and /stop/ dropping frames
     }
 
     // TODO: close all of the subsystems

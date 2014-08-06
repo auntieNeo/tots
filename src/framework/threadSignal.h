@@ -9,10 +9,10 @@ namespace tots { namespace framework {
       ThreadSignal();
       ~ThreadSignal();
 
+      // signals for ready threads
       void waitReady() { SDL_SemWait(m_readySemaphore); }
       bool tryWaitReady();
       bool checkReady() { return static_cast<bool>(SDL_SemValue(m_readySemaphore)); }
-
       void signalReady() { SDL_SemPost(m_readySemaphore); }
 
     private:

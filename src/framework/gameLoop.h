@@ -19,7 +19,7 @@ namespace tots { namespace framework {
    * more threads.
    *
    * GameLoop implements a non-locking game loop that shares data between
-   * subsystem threads using an aggregate command queue and multiple copies of
+   * subsystem threads using an aggregate message queue and multiple copies of
    * the GameState object.
    *
    * Games that use the Tots engine must construct a GameLoop object with a
@@ -84,7 +84,7 @@ namespace tots { namespace framework {
    * autonumber 0 0 "t = ##"
    *
    * note over Graphics : Graphics
-   * GameLoop ->> Graphics: <b>UPDATE</b>
+   * GameLoop -->> Graphics: <b>UPDATE</b>
    * activate Graphics
    * note over Physics : Physics
    * GameLoop ->> Physics: <b>UPDATE</b>
@@ -111,7 +111,7 @@ namespace tots { namespace framework {
    * autonumber 16 0 "t = ##"
    *
    * note over Graphics : Graphics
-   * GameLoop ->> Graphics: <b>UPDATE</b>
+   * GameLoop -->> Graphics: <b>UPDATE</b>
    * activate Graphics
    *
    * note over Collision : Collision
@@ -280,7 +280,7 @@ namespace tots { namespace framework {
     private:
       GameState *m_state;
 //      AggregateQueue<Message> *m_messageQueue;
-      TaskQueue *m_taskQueue, *m_overdueTaskQueue;
+      TaskQueue *m_taskQueue, *m_pendingTaskQueue;
 
       Subsystem **m_subsystems;
       size_t m_numSubsystems;
