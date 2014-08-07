@@ -5,6 +5,8 @@
 #include "threadPool.h"
 #include "subsystem.h"
 
+#include <memory.h>
+
 #define NUM_THREADS 4
 
 namespace tots {
