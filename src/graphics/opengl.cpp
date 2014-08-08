@@ -1,7 +1,7 @@
 #define OPENGL_CPP_
 #include "opengl.h"
 
-#include "../log.h"
+#include "../logging/log.h"
 
 /*
  * Initialize all of the OpenGL API function pointers using GLEW. As suggested

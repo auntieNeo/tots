@@ -1,5 +1,5 @@
 #include "common.h"
-#include "log.h"
+#include "logging/log.h"
 
 #include "graphics/graphics.h"
 #include "graphics/triangle.h"

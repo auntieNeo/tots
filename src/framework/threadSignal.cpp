@@ -1,6 +1,6 @@
 #include "threadSignal.h"
 
-#include "../log.h"
+#include "../logging/log.h"
 #include "../common.h"
 
 namespace tots { namespace framework {

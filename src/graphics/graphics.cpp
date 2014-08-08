@@ -3,7 +3,8 @@
 #include "triangle.h"
 
 #include "../common.h"
-#include "../log.h"
+#include "../logging/log.h"
+#include "logging.h"
 
 #include <cstdlib>
 #include <errno.h>

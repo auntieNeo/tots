@@ -1,6 +1,6 @@
 #include "threadPool.h"
 
-#include "../log.h"
+#include "../logging/log.h"
 #include "gameState.h"
 #include "subsystemThread.h"
 #include "subsystem.h"

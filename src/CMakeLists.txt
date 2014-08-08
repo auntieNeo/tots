@@ -1,4 +1,4 @@
-add_executable(tots main.cpp log.cpp)
+add_executable(tots main.cpp)
 target_link_libraries(tots framework graphics logging ${Boost_LIBRARIES} ${GLEW_LIBRARIES} ${OPENGL_LIBRARIES} ${SDL2_LIBRARY})
 
 add_subdirectory("./framework")

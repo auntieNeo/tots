@@ -146,6 +146,8 @@ namespace tots { namespace framework {
       // wait patiently for thread resources to become available
       m_signal->waitReady();
 
+      // TODO: check for finished tasks somehow
+
       // now we need to determine if there is a task that we can run
       // check the first task in the task queue
       if(m_taskQueue->hasNext()) {
