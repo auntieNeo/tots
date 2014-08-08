@@ -108,7 +108,82 @@ if(WIN32)
 endif(WIN32)
 find_package(Boost REQUIRED COMPONENTS exception filesystem system unit_test_framework)
 
+if(WIN32)
+  set(GTEST_VERSION 1.7.0)
+  set(GTEST_ARCHIVE "gtest-${GTEST_VERSION}.zip")
+  set(GTEST_ARCHIVE_PATH "${VS_LIB_DIR}/${GTEST_ARCHIVE}")
+  if(NOT EXISTS "${GTEST_ARCHIVE_PATH}")
+    message("Downloading '${GTEST_ARCHIVE}' to '${VS_LIB_DIR_NATIVE}'...")
+    file(DOWNLOAD
+         "https://googletest.googlecode.com/files/${GTEST_ARCHIVE}"
+         "${GTEST_ARCHIVE_PATH}"
+         SHOW_PROGRESS)
+ endif()
+  set(GTEST_ROOT "${VS_LIB_DIR}/gtest-${GTEST_VERSION}")
+  if(NOT EXISTS "${GTEST_ROOT}")
+    message("Extracting '${GTEST_ARCHIVE}'...")
+    file(TO_NATIVE_PATH "${GTEST_ARCHIVE_PATH}" GTEST_ARCHIVE_PATH_NATIVE)
+    execute_process(COMMAND "${ZIP_EXECUTABLE}" x -tzip "-o${VS_LIB_DIR_NATIVE}" "${GTEST_ARCHIVE_PATH_NATIVE}")
+  endif()
+  if(NOT EXISTS "${GTEST_ROOT}/gtest.sln")
+    execute_process(COMMAND cmake "."
+                    WORKING_DIRECTORY "${GTEST_ROOT}")
+  endif()
+  if(NOT EXISTS "${GTEST_ROOT}/Debug/gtest.lib")
+    execute_process(COMMAND cmake --build "."
+                    WORKING_DIRECTORY "${GTEST_ROOT}")
+  endif()
+#  add_subdirectory(${GTEST_ROOT})
+
+# There's also a new, CMake 2.8 method for building externals. It sucks though, because it doesn't support .zip.
+# See: <http://www.kitware.com/media/html/BuildingExternalProjectsWithCMake2.8.html>
+#  include(ExternalProject)
+#  set(EP_PREFIX ${CMAKE_SOURCE_DIR}/vs_libs)
+#  ExternalProject_Add(
+#      gtest
+#      URL "https://googletest.googlecode.com/files/gtest-1.7.0.zip"
+#      )
+endif(WIN32)
 find_package(GTest REQUIRED)
+
+if(WIN32)
+  set(GMOCK_VERSION 1.7.0)
+  set(GMOCK_ARCHIVE "gmock-${GMOCK_VERSION}.zip")
+  set(GMOCK_ARCHIVE_PATH "${VS_LIB_DIR}/${GMOCK_ARCHIVE}")
+  message("${GMOCK_ARCHIVE_PATH}")
+  if(NOT EXISTS "${GMOCK_ARCHIVE_PATH}")
+    message("Downloading '${GMOCK_ARCHIVE}' to '${VS_LIB_DIR_NATIVE}'...")
+    file(DOWNLOAD
+         "https://googlemock.googlecode.com/files/${GMOCK_ARCHIVE}"
+         "${GMOCK_ARCHIVE_PATH}"
+         SHOW_PROGRESS)
+ endif()
+  set(GMOCK_ROOT "${VS_LIB_DIR}/gmock-${GMOCK_VERSION}")
+  if(NOT EXISTS "${GMOCK_ROOT}")
+    message("Extracting '${GMOCK_ARCHIVE}'...")
+    file(TO_NATIVE_PATH "${GMOCK_ARCHIVE_PATH}" GMOCK_ARCHIVE_PATH_NATIVE)
+    execute_process(COMMAND "${ZIP_EXECUTABLE}" x -tzip "-o${VS_LIB_DIR_NATIVE}" "${GMOCK_ARCHIVE_PATH_NATIVE}")
+  endif()
+  if(NOT EXISTS "${GMOCK_ROOT}/gmock.sln")
+    execute_process(COMMAND cmake "."
+                    WORKING_DIRECTORY "${GMOCK_ROOT}")
+  endif()
+  if(NOT EXISTS "${GMOCK_ROOT}/Debug/gmock.lib")
+    execute_process(COMMAND cmake --build "."
+                    WORKING_DIRECTORY "${GMOCK_ROOT}")
+  endif()
+#  add_subdirectory(${GMOCK_ROOT})
+
+# There's also a new, CMake 2.8 method for building externals. It sucks though, because it doesn't support .zip.
+# See: <http://www.kitware.com/media/html/BuildingExternalProjectsWithCMake2.8.html>
+#  include(ExternalProject)
+#  set(EP_PREFIX ${CMAKE_SOURCE_DIR}/vs_libs)
+#  ExternalProject_Add(
+#      gmock
+#      URL "https://googletest.googlecode.com/files/gmock-1.7.0.zip"
+#      )
+  SET(ENV{GMOCK_ROOT} "${GMOCK_ROOT}/Debug")  # hack to help the FindGMock.cmake script find the library
+endif(WIN32)
 find_package(GMock REQUIRED)
 
 include_directories(SYSTEM ${Boost_INCLUDE_DIRS} ${GLEW_INCLUDE_DIR} ${GMOCK_INCLUDE_DIRS} ${GTEST_INCLUDE_DIRS} ${OPENGL_INCLUDE_DIR} ${SDL2_INCLUDE_DIR})
