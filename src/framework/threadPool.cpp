@@ -26,7 +26,7 @@ namespace tots { namespace framework {
   }
 
   ThreadPool::~ThreadPool() {
-    // join all the running threads and destroy the thread semaphore
+    // join with all of the running threads
     for(size_t i = 0; i < m_numThreads; ++i) {
       delete m_threads[i];
     }

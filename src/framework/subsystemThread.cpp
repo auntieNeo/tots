@@ -30,6 +30,9 @@ namespace tots { namespace framework {
   SubsystemThread::~SubsystemThread() {
     // mark as done and wait for our thread
     setDone(true);
+    // Don't use signalRun() here, because its assert could bite us; 
+    // m_runSemaphore could be 1 if the thread hasn't aquired the semaphore yet.
+    SDL_SemPost(m_runSemaphore);
     SDL_WaitThread(m_sdlThread, NULL);
 
     // destroy our semaphore
@@ -69,7 +72,9 @@ namespace tots { namespace framework {
 
   int SubsystemThread::m_run(void *voidSelf) {
     SubsystemThread *self = static_cast<SubsystemThread *>(voidSelf);
-    while(!self->isDone()) {
+
+    while(true)
+    {
       // mark this thread as free
       self->setFree(true);
 
@@ -79,6 +84,10 @@ namespace tots { namespace framework {
       // wait for run signal (when the main thread wants us to run)
       self->waitRun();
 
+      // quit the thread (SubsystemThread was probably destroyed)
+      if(self->isDone())
+        return 0;
+
       // TODO: automatically update the game state
       // TODO: provide a callback to derived classes so that a SubsystemThread class can update the game state
 
@@ -86,6 +95,7 @@ namespace tots { namespace framework {
 //      self->currentTask()->run();  // FIXME
       self->runCurrentSubsystem(self->currentTask()->command());  // FIXME
     }
+    assert(false);  // should never reach this line
     return 0;
   }
 } }

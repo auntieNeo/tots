@@ -101,5 +101,20 @@ namespace tots { namespace framework { namespace tests {
   }
 
   // TODO: write a test for a preemptable task i.e. a task that takes a long time to execute, but must be preempted by shorter tasks and not hog a single processor
+
+  // TODO: write a test of a subsystem telling the game loop to exit
+  /*
+  TEST(GameLoop, QuitGame) {
+    MockSubsystem quitter;
+    Subsystem *subsystems[1];
+    subsystems[0] = &quitter;
+
+    // Subsystem registration within GameLoop
+    EXPECT_CALL(quitter, hints());
+
+    GameLoop *gameLoop = new GameLoop(subsystems, 1);
+    delete gameLoop;
+  }
+  */
 } } }
 
