@@ -81,4 +81,20 @@ namespace tots { namespace framework {
     // TODO: close stuff I guess
     m_close(state);
   }
+
+  // FIXME: move this back into the header with constexpr once C++14 hits MSVC
+  Subsystem::Hints operator&(Subsystem::Hints a, Subsystem::Hints b) {
+    return static_cast<Subsystem::Hints>(
+        static_cast<uint32_t>(a) & static_cast<uint32_t>(b)
+        );
+  }
+
+  // FIXME: move this back into the header with constexpr once C++14 hits MSVC
+  Subsystem::Hints operator|(Subsystem::Hints a, Subsystem::Hints b) {
+    return static_cast<Subsystem::Hints>(
+        static_cast<uint32_t>(a) | static_cast<uint32_t>(b)
+        );
+  }
+
+
 } }

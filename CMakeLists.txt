@@ -106,7 +106,7 @@ if(WIN32)
   set(Boost_USE_STATIC_LIBS ON)
   set(Boost_USE_MULTITHREADED ON)
 endif(WIN32)
-find_package(Boost REQUIRED COMPONENTS exception filesystem system unit_test_framework)
+find_package(Boost REQUIRED COMPONENTS exception filesystem system)
 
 if(WIN32)
   set(GTEST_VERSION 1.7.0)
@@ -126,23 +126,14 @@ if(WIN32)
     execute_process(COMMAND "${ZIP_EXECUTABLE}" x -tzip "-o${VS_LIB_DIR_NATIVE}" "${GTEST_ARCHIVE_PATH_NATIVE}")
   endif()
   if(NOT EXISTS "${GTEST_ROOT}/gtest.sln")
-    execute_process(COMMAND cmake "."
+    execute_process(COMMAND cmake "-DBUILD_SHARED_LIBS=ON" "."
                     WORKING_DIRECTORY "${GTEST_ROOT}")
   endif()
   if(NOT EXISTS "${GTEST_ROOT}/Debug/gtest.lib")
     execute_process(COMMAND cmake --build "."
                     WORKING_DIRECTORY "${GTEST_ROOT}")
   endif()
-#  add_subdirectory(${GTEST_ROOT})
-
-# There's also a new, CMake 2.8 method for building externals. It sucks though, because it doesn't support .zip.
-# See: <http://www.kitware.com/media/html/BuildingExternalProjectsWithCMake2.8.html>
-#  include(ExternalProject)
-#  set(EP_PREFIX ${CMAKE_SOURCE_DIR}/vs_libs)
-#  ExternalProject_Add(
-#      gtest
-#      URL "https://googletest.googlecode.com/files/gtest-1.7.0.zip"
-#      )
+  add_definitions(-DGTEST_LINKED_AS_SHARED_LIBRARY=1)
   SET(ENV{GTEST_ROOT} "${GTEST_ROOT}/Debug")  # hack to help the FindGTest.cmake script find the library
 endif(WIN32)
 find_package(GTest REQUIRED)
@@ -166,23 +157,13 @@ if(WIN32)
     execute_process(COMMAND "${ZIP_EXECUTABLE}" x -tzip "-o${VS_LIB_DIR_NATIVE}" "${GMOCK_ARCHIVE_PATH_NATIVE}")
   endif()
   if(NOT EXISTS "${GMOCK_ROOT}/gmock.sln")
-    execute_process(COMMAND cmake "."
+    execute_process(COMMAND cmake "-DBUILD_SHARED_LIBS=ON" "."
                     WORKING_DIRECTORY "${GMOCK_ROOT}")
   endif()
   if(NOT EXISTS "${GMOCK_ROOT}/Debug/gmock.lib")
     execute_process(COMMAND cmake --build "."
                     WORKING_DIRECTORY "${GMOCK_ROOT}")
   endif()
-#  add_subdirectory(${GMOCK_ROOT})
-
-# There's also a new, CMake 2.8 method for building externals. It sucks though, because it doesn't support .zip.
-# See: <http://www.kitware.com/media/html/BuildingExternalProjectsWithCMake2.8.html>
-#  include(ExternalProject)
-#  set(EP_PREFIX ${CMAKE_SOURCE_DIR}/vs_libs)
-#  ExternalProject_Add(
-#      gmock
-#      URL "https://googletest.googlecode.com/files/gmock-1.7.0.zip"
-#      )
   SET(ENV{GMOCK_ROOT} "${GMOCK_ROOT}/Debug")  # hack to help the FindGMock.cmake script find the library
 endif(WIN32)
 find_package(GMock REQUIRED)

@@ -1,5 +1,7 @@
 #include "logging.h"
 
+#include <cstdio>
+
 int check_OpenGL_error(const char *msg)
 {
   GLenum error;

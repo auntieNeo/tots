@@ -207,9 +207,9 @@ namespace tots { namespace graphics {
         }
         printf("found: %s\n", i->path().c_str());
         size_t shaderIndex = (*numShaders)++;
-        size_t pathLength = strlen(i->path().c_str()) + 1;
+        size_t pathLength = strlen(i->path().string().c_str()) + 1;
         result[shaderIndex] = new char[pathLength];
-        strncpy(result[shaderIndex], i->path().c_str(), pathLength);
+        strncpy(result[shaderIndex], i->path().string().c_str(), pathLength);
       }
     }
     return result;

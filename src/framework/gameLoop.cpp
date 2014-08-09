@@ -7,7 +7,7 @@
 
 #include <SDL_timer.h>
 
-#include <unistd.h>
+#include <cstdio>
 
 #define NUM_THREADS 1
 

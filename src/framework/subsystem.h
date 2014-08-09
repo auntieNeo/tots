@@ -209,19 +209,9 @@ namespace tots { namespace framework {
       SubsystemThread *hoggedThread() const { return m_hoggedThread; }
   };
 
-  constexpr Subsystem::Hints
-  operator&(Subsystem::Hints a, Subsystem::Hints b) {
-    return static_cast<Subsystem::Hints>(
-        static_cast<uint32_t>(a) & static_cast<uint32_t>(b)
-        );
-  }
+  Subsystem::Hints operator&(Subsystem::Hints a, Subsystem::Hints b);
+  Subsystem::Hints operator|(Subsystem::Hints a, Subsystem::Hints b);
 
-  constexpr Subsystem::Hints
-  operator|(Subsystem::Hints a, Subsystem::Hints b) {
-    return static_cast<Subsystem::Hints>(
-        static_cast<uint32_t>(a) | static_cast<uint32_t>(b)
-        );
-  }
 } }
 
 #endif
