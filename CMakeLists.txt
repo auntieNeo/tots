@@ -143,6 +143,7 @@ if(WIN32)
 #      gtest
 #      URL "https://googletest.googlecode.com/files/gtest-1.7.0.zip"
 #      )
+  SET(ENV{GTEST_ROOT} "${GTEST_ROOT}/Debug")  # hack to help the FindGTest.cmake script find the library
 endif(WIN32)
 find_package(GTest REQUIRED)
 
