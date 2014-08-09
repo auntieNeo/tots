@@ -1,6 +1,10 @@
 add_executable(tots main.cpp)
 target_link_libraries(tots framework graphics logging ${Boost_LIBRARIES} ${GLEW_LIBRARIES} ${OPENGL_LIBRARIES} ${SDL2_LIBRARY})
 
+if(WIN32)
+  COPY_DLLS_TO_EXE(TARGET tots DLLS ${GLEW_DLLS} ${SDL2_DLLS})
+endif(WIN32)
+
 add_subdirectory("./framework")
 add_subdirectory("./graphics")
 add_subdirectory("./logging")

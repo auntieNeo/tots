@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 2.6)
 project (Typing_of_the_Stars)
 set (Typing_of_the_Stars_VERSION_MAJOR 0)
 set (Typing_of_the_Stars_VERSION_MINOR 2)
+set (CMAKE_BUILD_TYPE Debug)
 
 enable_testing()
 
@@ -16,6 +17,24 @@ else(WIN32)
 endif(WIN32)
 
 if(WIN32)
+  function(COPY_DLLS_TO_EXE)
+    set(oneValueArgs TARGET)
+    set(multiValueArgs DLLS)
+    cmake_parse_arguments(COPY_DLLS_TO_EXE "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+    get_property(exe_location TARGET ${COPY_DLLS_TO_EXE_TARGET} PROPERTY LOCATION)
+    string(REGEX REPLACE "\\$\\(Configuration\\)" "${CMAKE_BUILD_TYPE}"
+        exe_location "${exe_location}")
+    get_filename_component(exe_location "${exe_location}" DIRECTORY)
+    message(STATUS "copying dll's to .exe path: ${exe_location}")
+    foreach(dll ${COPY_DLLS_TO_EXE_DLLS})
+      file(COPY ${dll} DESTINATION ${exe_location})
+      message(STATUS "  copied dll: ${dll}")
+    endforeach()
+  endfunction()
+endif(WIN32)
+
+# find a zip utility (7-zip) for extracting .zip files (which CMake can't do yet)
+if(WIN32)
   # FIXME: this won't find 64bit 7z if cmake is 32bit
   find_program(ZIP_EXECUTABLE 7z PATHS "$ENV{ProgramFiles}/7-Zip" "$ENV{ProgramFiles(X86)}/7-Zip") 
     if(ZIP_EXECUTABLE)
@@ -27,6 +46,7 @@ if(WIN32)
   file(TO_NATIVE_PATH "${VS_LIB_DIR}" VS_LIB_DIR_NATIVE)
 endif(WIN32)
 
+# SDL2 library
 if(WIN32)
   set(SDL2_VERSION 2.0.3)
   set(SDL2_ARCHIVE "SDL2-devel-${SDL2_VERSION}-VC.zip")
@@ -47,11 +67,13 @@ if(WIN32)
   endif()
   set(CMAKE_INCLUDE_PATH "${SDL2_DIR}/include;${CMAKE_INCLUDE_PATH}")
   set(CMAKE_LIBRARY_PATH "${SDL2_DIR}/lib/x86;${CMAKE_LIBRARY_PATH}")
+  set(SDL2_DLLS "${SDL2_DIR}/lib/x86/SDL2.dll")
 # FIXME: need to distinguish 32 bit and 64 bit builds
 #  set(CMAKE_LIBRARY_PATH "${SDL2_DIR}/lib/x64;${CMAKE_LIBRARY_PATH}")
 endif(WIN32)
 find_package(SDL2 REQUIRED)
 
+# GLEW library
 if(WIN32)
   set(GLEW_VERSION 1.10.0)
   set(GLEW_ARCHIVE "glew-${GLEW_VERSION}-win32.zip")
@@ -71,6 +93,7 @@ if(WIN32)
   endif()
   set(CMAKE_INCLUDE_PATH "${GLEW_DIR}/include;${CMAKE_INCLUDE_PATH}")
   set(CMAKE_LIBRARY_PATH "${GLEW_DIR}/lib/Release/Win32;${CMAKE_LIBRARY_PATH}")
+  set(GLEW_DLLS "${GLEW_DIR}/bin/Release/Win32/glew32.dll")
 # FIXME: need to distinguish 32 bit and 64 bit builds
 #  set(CMAKE_LIBRARY_PATH "${GLEW_DIR}/lib/Release/x64;${CMAKE_LIBRARY_PATH}")
 endif(WIN32)
@@ -78,6 +101,7 @@ find_package(GLEW REQUIRED)
 
 find_package(OpenGL REQUIRED)
 
+# Boost library (very large; takes forever on Win32)
 if(WIN32)
   set(BOOST_VERSION 1_55_0)
   set(BOOST_ARCHIVE "boost_${BOOST_VERSION}.zip")
@@ -108,6 +132,7 @@ if(WIN32)
 endif(WIN32)
 find_package(Boost REQUIRED COMPONENTS exception filesystem system)
 
+# Google Test framework
 if(WIN32)
   set(GTEST_VERSION 1.7.0)
   set(GTEST_ARCHIVE "gtest-${GTEST_VERSION}.zip")
@@ -135,9 +160,11 @@ if(WIN32)
   endif()
   add_definitions(-DGTEST_LINKED_AS_SHARED_LIBRARY=1)
   SET(ENV{GTEST_ROOT} "${GTEST_ROOT}/Debug")  # hack to help the FindGTest.cmake script find the library
+  set(GTEST_DLLS "${GTEST_ROOT}/Debug/gtest.dll" "${GTEST_ROOT}/Debug/gtest_main.dll")
 endif(WIN32)
 find_package(GTest REQUIRED)
 
+# Google Mock framework
 if(WIN32)
   set(GMOCK_VERSION 1.7.0)
   set(GMOCK_ARCHIVE "gmock-${GMOCK_VERSION}.zip")
@@ -165,12 +192,14 @@ if(WIN32)
                     WORKING_DIRECTORY "${GMOCK_ROOT}")
   endif()
   SET(ENV{GMOCK_ROOT} "${GMOCK_ROOT}/Debug")  # hack to help the FindGMock.cmake script find the library
+  set(GMOCK_DLLS "${GMOCK_ROOT}/Debug/gmock.dll" "${GMOCK_ROOT}/Debug/gmock_main.dll")
 endif(WIN32)
 find_package(GMock REQUIRED)
 
 include_directories(SYSTEM ${Boost_INCLUDE_DIRS} ${GLEW_INCLUDE_DIR} ${GMOCK_INCLUDE_DIRS} ${GTEST_INCLUDE_DIRS} ${OPENGL_INCLUDE_DIR} ${SDL2_INCLUDE_DIR})
 #link_directories(${Boost_LIBRARY_DIRS} ${CMAKE_SOURCE_DIR}/vs_libs/glew-1.10.0/lib/Release/Win32 ${CMAKE_SOURCE_DIR}/vs_libs/SDL2-2.0.3/lib/x86)
 
+# use plantuml for some diagrams and doxygen for the rest
 add_custom_target(documentation
     plantuml -v -o "${CMAKE_CURRENT_SOURCE_DIR}/documentation/images" "'./src/**.(c|cpp|dox|h)'"
     COMMAND doxygen)
