@@ -1,6 +1,7 @@
 #ifndef SUBSYSTEM_H_
 #define SUBSYSTEM_H_
 
+#include "message.h"
 #include "../common.h"
 
 namespace tots { namespace framework {
@@ -113,9 +114,9 @@ namespace tots { namespace framework {
       Subsystem();
       virtual ~Subsystem();
 
-      void init(const GameState *state);
-      void update(const GameState *state);
-      void close(const GameState *state);
+      void init(GameState *state);
+      void update(GameState *state);
+      void close(GameState *state);
 
       /**
        * Derived Subsystem classes can implement the hints() method to return a
@@ -135,6 +136,8 @@ namespace tots { namespace framework {
        * suitable name for the subsystem, for debugging purposes.
        */
       virtual const char *name() const = 0;
+
+      virtual utility::StringId address() const = 0;
 
       /**
        * The updatePeriod() returns an integer indicating how often the
@@ -171,7 +174,7 @@ namespace tots { namespace framework {
        *
        * \sa init()
        */
-      virtual void m_init(const GameState *state) = 0;
+      virtual void m_init() = 0;
 
       /**
        * Derived classes must implement the m_update() method. m_update() is
@@ -184,7 +187,7 @@ namespace tots { namespace framework {
        *
        * \sa update()
        */
-      virtual void m_update(const GameState *state) = 0;
+      virtual void m_update() = 0;
 
       /**
        * Dervied classes msut implement the m_close() method. m_close() is
@@ -194,12 +197,17 @@ namespace tots { namespace framework {
        *
        * \sa close()
        */
-      virtual void m_close(const GameState *state) = 0;
+      virtual void m_close() = 0;
+
+      virtual void sendMessage(utility::StringId type, utility::StringId recipiant);
+//      virtual void sendMessage(const char *message, Message::Address recipiant);
+//      virtual void sendMessage(const Message &message);
 
 //      size_t m_dt;  // TODO: expose a delta time somewhere
 
     private:
-      EventQueue *m_input, *m_output;
+      GameState *m_gameState;
+
       SubsystemThread *m_lastThread, *m_hoggedThread;
 
       void setLastThread(SubsystemThread *lastThread) { m_lastThread = lastThread; }

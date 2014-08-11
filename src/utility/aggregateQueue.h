@@ -4,7 +4,10 @@
 namespace tots { namespace utility {
   class EventQueue;
   /*!
-   * The AggregateQueue class combines many Queue objects efficiently.
+   * The AggregateQueue class combines many Queue objects efficiently. It is
+   * essentially a deque container that
+   *
+   *
    * Since Queue objects are essentially reference-counted pointers to simple,
    * contiguous blocks of memory, these pointers can be aggregated easily and
    * efficiently. This facilitates efficient communication between threads
@@ -20,18 +23,19 @@ namespace tots { namespace utility {
       AggregateQueue();
       ~AggregateQueue();
 
-      void append(const T &item);
-      void appendBatch(const Queue<T> &queue);
-      void appendBatch(const AggregateQueue<T> &queue);
+      void push(const T &item);
+
+//      void merge(const AggregateQueue<T> &queue);
 
       T pop();
-      Queue<T> popBatch();
+//      Queue<T> popBatch();
 
       T peek();
-      Queue<T> peekBatch();
+//      Queue<T> peekBatch();
 
     private:
-      std::vector< Queue<T> > m_queues;
+//      std::vector< Queue<T> > m_queues;
+      T *m_items;
   };
 
   template<typename T, typename K>
@@ -47,28 +51,34 @@ namespace tots { namespace utility {
     m_queues[item.type()].append(item);
   }
 
+  /*
   template<typename T, typename K>
   void AggregateQueue<T, K>::appendBatch(const K &key, const Queue<T> &queue) {
     if(m_queues.find(key) == m_queues.end()) {
       m_queues.emplace(queue.type(), queue);
     }
   }
+  */
 
   template<typename T, typename K>
   T AggregateQueue<T, K>::pop(const K &key) {
   }
 
+  /*
   template<typename T, typename K>
   T AggregateQueue<T, K>::popBatch(const K &key) {
   }
+  */
 
   template<typename T, typename K>
   T AggregateQueue<T, K>::peek(const K &key) {
   }
 
+  /*
   template<typename T, typename K>
   T AggregateQueue<T, K>::peekBatch(const K &key) {
   }
+  */
 } }
 
 #endif

@@ -20,13 +20,14 @@ namespace tots {
         void addComponent(GraphicsComponent *component);
         Subsystem::Hints hints() const { return /* Hints::HOG_THREAD | */ Hints::UPDATE_EACH_FRAME; }
 
-        const char *name() const { return "Graphics Subsystem"; }
+        const char *name() const { return "Graphics"; }
+        utility::StringId address() const { return ADDRESS("Graphics"); }
         int32_t updatePeriod() const { return 1; }
 
       protected:
-        void m_init(const tots::framework::GameState *state);
-        void m_update(const tots::framework::GameState *state);
-        void m_close(const tots::framework::GameState *state);
+        void m_init();
+        void m_update();
+        void m_close();
 
       private:
         SDL_Window *m_window;

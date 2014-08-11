@@ -45,7 +45,7 @@ namespace tots { namespace graphics {
     // TODO: call this->close() safely in destructor
   }
 
-  void Graphics::m_init(const GameState *state) {
+  void Graphics::m_init() {
     fprintf(stderr, "SDL video drivers:\n");
     int numVideoDrivers = SDL_GetNumVideoDrivers();
     if(numVideoDrivers <= 0) {
@@ -168,7 +168,7 @@ namespace tots { namespace graphics {
     addComponent(triangle);
   }
 
-  void Graphics::m_close(const GameState *state) {
+  void Graphics::m_close() {
     free(m_fragShaders);
     free(m_vertShaders);
 
@@ -286,7 +286,7 @@ namespace tots { namespace graphics {
     return shader;
   }
 
-  void Graphics::m_update(const GameState *state) {
+  void Graphics::m_update() {
     // TODO: set graphics context
     // TODO: buffering, etc.
     glClear(GL_COLOR_BUFFER_BIT);

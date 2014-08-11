@@ -42,9 +42,12 @@ namespace tots { namespace framework {
    *
    * \sa m_init()
    */
-  void Subsystem::init(const GameState *state) {
-    // TODO: initialize something I guess
-    m_init(state);
+  void Subsystem::init(GameState *state) {
+    // set our GameState reference
+    m_gameState = state;
+
+    // invoke the method defined by derived classes
+    m_init();
   }
 
   /**
@@ -57,9 +60,14 @@ namespace tots { namespace framework {
    *
    * \sa m_update()
    */
-  void Subsystem::update(const GameState *state) {
+  void Subsystem::update(GameState *state) {
+    // set our GameState reference
+    m_gameState = state;
+
     // TODO: determine and update the delta time in m_dt
-    m_update(state);
+
+    // invoke the method defined by derived classes
+    m_update();
   }
 
   /**
@@ -77,9 +85,19 @@ namespace tots { namespace framework {
    *
    * \sa m_close()
    */
-  void Subsystem::close(const GameState *state) {
-    // TODO: close stuff I guess
-    m_close(state);
+  void Subsystem::close(GameState *state) {
+    // set our GameState reference
+    m_gameState = state;
+
+    // invoke the method defined by derived classes
+    m_close();
+  }
+
+  void Subsystem::sendMessage(utility::StringId message, utility::StringId recipiant) {
+    Message m(message);
+    m.setSender(this->address());
+    m.setRecipiant(recipiant);
+//    m_gameState->messageQueue()->sendMessage(message);
   }
 
   // FIXME: move this back into the header with constexpr once C++14 hits MSVC
@@ -95,6 +113,4 @@ namespace tots { namespace framework {
         static_cast<uint32_t>(a) | static_cast<uint32_t>(b)
         );
   }
-
-
 } }

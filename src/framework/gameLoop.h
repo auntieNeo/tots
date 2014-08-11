@@ -1,5 +1,5 @@
-#ifndef GAME_LOOP_H_
-#define GAME_LOOP_H_
+#ifndef TOTS_FRAMEWORK_GAME_LOOP_H_
+#define TOTS_FRAMEWORK_GAME_LOOP_H_
 
 #include "../common.h"
 #include "../utility/priorityQueue.h"

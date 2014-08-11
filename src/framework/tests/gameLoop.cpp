@@ -6,7 +6,10 @@
 #include "subsystem.h"
 #include "../gameLoop.h"
 
+#include "../../utility/crc32.h"
+
 using namespace testing;
+using namespace tots::utility;
 
 namespace tots { namespace framework { namespace tests {
   class Canadian;
@@ -19,15 +22,16 @@ namespace tots { namespace framework { namespace tests {
    */
   class Canadian : public Subsystem {
     public:
-      void m_init(const GameState *state) {}
-      void m_update(const GameState *state) {
+      void m_init() {}
+      void m_update() {
 //      sprintf(message, "I'm not your %s, %s!",
-//        state->sendMessage(); TODO
+//        sendMessage(); TODO
       }
-      void m_close(const GameState *state) {}
+      void m_close() {}
 
       Hints hints() const { return Hints::NONE; }
-      const char *name() const { return "Canadian Subsystem"; }
+      const char *name() const { return "Canadian"; }
+      StringId address() const { return ADDRESS("Canadian"); }
       int32_t updatePeriod() const { return 10; }
   };
 
@@ -67,12 +71,13 @@ namespace tots { namespace framework { namespace tests {
    */
   class SlowSubsystem : public Subsystem {
     public:
-      void m_init(const GameState *state) { SDL_Delay(1000); }
-      void m_update(const GameState *state) { SDL_Delay(1000); }
-      void m_close(const GameState *state) { SDL_Delay(1000); }
+      void m_init() { SDL_Delay(1000); }
+      void m_update() { SDL_Delay(1000); }
+      void m_close() { SDL_Delay(1000); }
 
       Hints hints() const { return Hints::NONE; }
-      const char *name() const { return "Slow Subsystem"; }
+      const char *name() const { return "SlowSubsystem"; }
+      StringId address() const { return ADDRESS("SlowSubsystem"); }
       int32_t updatePeriod() const { return 1; }
   };
 
@@ -102,10 +107,23 @@ namespace tots { namespace framework { namespace tests {
 
   // TODO: write a test for a preemptable task i.e. a task that takes a long time to execute, but must be preempted by shorter tasks and not hog a single processor
 
+  class Quitter : public Subsystem {
+    public:
+      void m_init() {}
+      void m_update() {
+        sendMessage(TYPE("exit"), ADDRESS("GameLoop"));
+      }
+      void m_close() {}
+
+      Hints hints() const { return Hints::NONE; }
+      const char *name() const { return "Subsystem::Quitter"; }
+      StringId address() const { return ADDRESS("Subsystem::Quitter"); }
+      int32_t updatePeriod() const { return 1; }
+  };
+
   // TODO: write a test of a subsystem telling the game loop to exit
-  /*
   TEST(GameLoop, QuitGame) {
-    MockSubsystem quitter;
+    MockSubsystemWithDelegate<Quitter> quitter;
     Subsystem *subsystems[1];
     subsystems[0] = &quitter;
 
@@ -115,6 +133,4 @@ namespace tots { namespace framework { namespace tests {
     GameLoop *gameLoop = new GameLoop(subsystems, 1);
     delete gameLoop;
   }
-  */
 } } }
-
