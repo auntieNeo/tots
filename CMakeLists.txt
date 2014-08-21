@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 4.6)
 project (Typing_of_the_Stars)
 set (Typing_of_the_Stars_VERSION_MAJOR 0)
 set (Typing_of_the_Stars_VERSION_MINOR 2)
@@ -15,6 +15,18 @@ else(WIN32)
   set(CMAKE_CXX_FLAGS "-g -Wall -std=c++11")
   add_definitions(-DLINUX)
 endif(WIN32)
+
+# expose cmake option on UNIX systems
+if(UNIX)
+  option(USE_CLANG "use clang to build" OFF)
+
+  if(USE_CLANG)
+    set(CMAKE_C_COMPILER "clang")
+    set(CMAKE_CXX_COMPILER "clang")
+#    set(_CMAKE_TOOLCHAIN_PREFIX "llvm-")
+  endif(USE_CLANG)
+endif(UNIX)
+
 
 if(WIN32)
   function(COPY_DLLS_TO_EXE)
